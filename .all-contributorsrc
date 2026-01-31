@@ -1,0 +1,29 @@
+{
+  "projectName": "DukeOps",
+  "projectOwner": "McPringle",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "CONTRIBUTORS.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "angular",
+  "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg?style=flat-square)](#contributors)",
+  "contributors": [
+    {
+      "login": "McPringle",
+      "name": "Marcus Fihlon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1254039?v=4",
+      "profile": "https://github.com/McPringle",
+      "contributions": [
+        "projectManagement",
+        "ideas",
+        "code",
+        "design"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "linkToUsage": false
+}

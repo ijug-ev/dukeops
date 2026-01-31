@@ -1,0 +1,41 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":disableDependencyDashboard"
+  ],
+  "ignorePaths": [
+    "Dockerfile",
+    "package.json",
+    "pnpm-lock.yaml"
+  ],
+  "assignees": [
+    "McPringle"
+  ],
+  "reviewers": [
+    "McPringle"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["maven", "maven-wrapper", "gradle", "gradle-wrapper"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "branch",
+      "commitMessagePrefix" : "chore(deps): "
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true,
+      "automergeType": "branch",
+      "commitMessagePrefix" : "chore(deps): "
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "branch",
+      "commitMessagePrefix": "chore(deps): "
+    }
+  ],
+  "platformAutomerge": true
+}
