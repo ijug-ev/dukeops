@@ -28,8 +28,8 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
-import eu.ijug.dukeops.security.SecurityConfig;
-import eu.ijug.dukeops.service.ConfirmationService;
+import eu.ijug.dukeops.SecurityConfig;
+import eu.ijug.dukeops.domain.authentication.control.ConfirmationService;
 import eu.ijug.dukeops.web.layout.WebsiteLayout;
 
 @AnonymousAllowed

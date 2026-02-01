@@ -27,7 +27,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
-import eu.ijug.dukeops.service.ConfirmationService;
+import eu.ijug.dukeops.domain.authentication.control.ConfirmationService;
 import eu.ijug.dukeops.web.infra.Navigator;
 import eu.ijug.dukeops.web.layout.WebsiteLayout;
 

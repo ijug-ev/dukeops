@@ -22,7 +22,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import org.jetbrains.annotations.NotNull;
-import eu.ijug.dukeops.service.AuthenticationService;
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.web.layout.WebsiteLayout;
 
 @PermitAll

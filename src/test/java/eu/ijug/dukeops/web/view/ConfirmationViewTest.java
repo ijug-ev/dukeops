@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
-import eu.ijug.dukeops.service.ConfirmationService;
+import eu.ijug.dukeops.domain.authentication.control.ConfirmationService;
 import eu.ijug.dukeops.web.infra.Navigator;
 
 import java.time.Duration;

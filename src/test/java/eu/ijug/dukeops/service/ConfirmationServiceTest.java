@@ -17,6 +17,8 @@
  */
 package eu.ijug.dukeops.service;
 
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
+import eu.ijug.dukeops.domain.authentication.control.ConfirmationService;
 import eu.ijug.dukeops.entity.UserDto;
 import eu.ijug.dukeops.entity.UserRole;
 import eu.ijug.dukeops.i18n.TranslationProvider;

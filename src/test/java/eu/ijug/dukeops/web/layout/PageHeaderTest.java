@@ -20,7 +20,7 @@ package eu.ijug.dukeops.web.layout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
-import eu.ijug.dukeops.service.AuthenticationService;
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.web.infra.Navigator;
 import eu.ijug.dukeops.web.view.DashboardView;
 import eu.ijug.dukeops.web.view.LoginView;

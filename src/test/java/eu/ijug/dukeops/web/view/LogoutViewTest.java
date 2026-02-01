@@ -19,7 +19,7 @@ package eu.ijug.dukeops.web.view;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import eu.ijug.dukeops.service.AuthenticationService;
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;

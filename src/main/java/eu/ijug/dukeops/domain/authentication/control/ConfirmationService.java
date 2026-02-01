@@ -15,11 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.service;
+package eu.ijug.dukeops.domain.authentication.control;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import eu.ijug.dukeops.i18n.TranslationProvider;
+import eu.ijug.dukeops.service.MailService;
+import eu.ijug.dukeops.service.UserService;
 import eu.ijug.dukeops.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
