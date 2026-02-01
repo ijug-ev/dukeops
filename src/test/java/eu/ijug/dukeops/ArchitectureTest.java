@@ -26,9 +26,14 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import eu.ijug.dukeops.config.AppConfig;
 import eu.ijug.dukeops.test.BrowserTest;
 import eu.ijug.dukeops.test.KaribuTest;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -358,6 +363,46 @@ class ArchitectureTest {
         classes()
                 .should(noOneMayCallUiGetCurrent)
                 .because("UI.getCurrent() is global state and makes code harder to test")
+                .check(classesWithoutTests);
+    }
+
+    @Test
+    void routesAndAliasesMustHaveExactlyOneSecurityAnnotation() {
+        final var allowed = Set.of(
+                AnonymousAllowed.class.getName(),
+                PermitAll.class.getName(),
+                RolesAllowed.class.getName()
+        );
+
+        final ArchCondition<JavaClass> haveExactlyOneOfAllowedSecurityAnnotations =
+                new ArchCondition<>("have exactly one of @AnonymousAllowed, @PermitAll, @RolesAllowed") {
+                    @Override
+                    public void check(final @NotNull JavaClass clazz, final @NotNull ConditionEvents events) {
+                        final var present = clazz.getAnnotations().stream()
+                                .map(a -> a.getRawType().getName())
+                                .filter(allowed::contains)
+                                .collect(Collectors.toSet());
+
+                        if (present.isEmpty()) {
+                            events.add(SimpleConditionEvent.violated(
+                                    clazz,
+                                    clazz.getName() + " is a Vaadin route (@Route/@RouteAlias) but has no security " +
+                                            "annotation (@AnonymousAllowed/@PermitAll/@RolesAllowed)"));
+                        } else if (present.size() > 1) {
+                            events.add(SimpleConditionEvent.violated(
+                                    clazz,
+                                    clazz.getName() + " is a Vaadin route (@Route/@RouteAlias) but has multiple " +
+                                            "security annotations: " + present));
+                        }
+                    }
+                };
+
+        classes()
+                .that().areAnnotatedWith(Route.class)
+                .or().areAnnotatedWith(RouteAlias.class)
+                .and().doNotHaveModifier(ABSTRACT)
+                .should(haveExactlyOneOfAllowedSecurityAnnotations)
+                .because("every navigable Vaadin route (including aliases) must declare its access level explicitly")
                 .check(classesWithoutTests);
     }
 
