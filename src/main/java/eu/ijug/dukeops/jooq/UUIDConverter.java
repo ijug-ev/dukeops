@@ -15,19 +15,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.entity;
+package eu.ijug.dukeops.jooq;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.Converter;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record UserDto(
-        @Nullable UUID id,
-        @Nullable LocalDateTime created,
-        @Nullable LocalDateTime updated,
-        @NotNull String name,
-        @NotNull String email,
-        @NotNull UserRole role
-) { }
+public final class UUIDConverter implements Converter<String, UUID> {
+
+    @Override
+    public @Nullable UUID from(final @Nullable String databaseObject) {
+        return databaseObject == null ? null : UUID.fromString(databaseObject);
+    }
+
+    @Override
+    public @Nullable String to(final @Nullable UUID userObject) {
+        return userObject == null ? null : userObject.toString();
+    }
+
+    @Override
+    public @NotNull Class<String> fromType() {
+        return String.class;
+    }
+
+    @Override
+    public @NotNull Class<UUID> toType() {
+        return UUID.class;
+    }
+
+}

@@ -17,6 +17,8 @@
  */
 package eu.ijug.dukeops.service;
 
+import eu.ijug.dukeops.jooq.StorageService;
+import eu.ijug.dukeops.jooq.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
@@ -29,20 +31,21 @@ import java.util.Optional;
 import static eu.ijug.dukeops.db.Tables.USER;
 
 @Service
-public final class UserService {
+public final class UserService extends StorageService {
 
     private final @NotNull DSLContext dsl;
 
-    public UserService(final @NotNull DSLContext dsl) {
-        super();
+    public UserService(final @NotNull DSLContext dsl,
+                       final @NotNull UniqueIdGenerator idGenerator) {
+        super(idGenerator);
         this.dsl = dsl;
     }
 
-    public void storeUser(final @NotNull UserDto user) {
-        final UserRecord userRecord = dsl.fetchOptional(USER, USER.EMAIL.eq(user.email()))
+    public @NotNull UserDto storeUser(final @NotNull UserDto user) {
+        final UserRecord userRecord = dsl.fetchOptional(USER, USER.ID.eq(user.id()))
                 .orElse(dsl.newRecord(USER));
-        userRecord.from(user);
-        userRecord.store();
+        createOrUpdate(USER, user, userRecord);
+        return userRecord.into(UserDto.class);
     }
 
     public @NotNull List<@NotNull UserDto> getAllUsers() {

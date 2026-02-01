@@ -472,7 +472,49 @@
                             </environmentVariables>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>jooq-codegen-forked</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/java</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+
+                            <includePluginDependencies>true</includePluginDependencies>
+                            <classpathScope>test</classpathScope>
+                            <longClasspath>true</longClasspath>
+
+                            <arguments>
+                                <argument>-cp</argument>
+                                <classpath/>
+                                <argument>org.jooq.codegen.GenerationTool</argument>
+                                <argument>${project.basedir}/src/main/resources/jooq-codegen.xml</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                 </executions>
+
+                <dependencies>
+                    <!-- Needed so GenerationTool is available -->
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-meta</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-meta-extensions</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -839,56 +881,6 @@
                     <years>1</years>
                     <shouldFailBuild>true</shouldFailBuild>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-                <executions>
-                    <execution>
-                        <id>jooq-codegen</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jdbc>
-                        <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
-                        <url>jdbc:tc:mariadb:lts:///ignored?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/migration/R__rebuild-schema.sql</url>
-                        <user>test</user>
-                        <password>test</password>
-                    </jdbc>
-                    <generator>
-                        <database>
-                            <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
-                            <inputSchema>test</inputSchema>
-                            <outputSchemaToDefault>true</outputSchemaToDefault>
-                            <properties>
-                                <property>
-                                    <key>sort</key>
-                                    <value>semantic</value>
-                                </property>
-                            </properties>
-                        </database>
-                        <generate>
-                            <validationAnnotations>true</validationAnnotations>
-                            <javaTimeTypes>true</javaTimeTypes>
-                        </generate>
-                        <target>
-                            <packageName>eu.ijug.dukeops.db</packageName>
-                            <directory>target/generated-sources/jooq</directory>
-                        </target>
-                    </generator>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jooq</groupId>
-                        <artifactId>jooq-meta-extensions</artifactId>
-                        <version>${jooq.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
             <plugin>

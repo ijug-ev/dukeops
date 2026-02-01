@@ -21,7 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,11 +31,14 @@ class UserPrincipalTest {
 
     @Test
     void testUserWithAllValuesSet() {
+        final var id = UUID.randomUUID();
+        final var created = LocalDateTime.now().minusDays(2);
+        final var updated = LocalDateTime.now().minusDays(1);
         final var name = "Test User";
         final var email = "test@example.com";
         final var role = UserRole.USER;
 
-        final var user = new UserDto(name, email, role);
+        final var user = new UserDto(id, created, updated, name, email, role);
         final var authorities = List.of((GrantedAuthority) new SimpleGrantedAuthority("ROLE_USER"));
 
         final var principal = new UserPrincipal(user, authorities);

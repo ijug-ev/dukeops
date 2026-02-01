@@ -36,6 +36,7 @@ import eu.ijug.dukeops.entity.UserRole;
 import eu.ijug.dukeops.service.UserService;
 import eu.ijug.dukeops.util.LinkUtil;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -58,8 +59,8 @@ import static org.awaitility.Awaitility.await;
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
 
-    protected static final UserDto TEST_USER = new UserDto("Default Test User", "user@example.com", UserRole.USER);
-    protected static final UserDto TEST_ADMIN = new UserDto("Default Test Admin", "admin@example.com", UserRole.ADMIN);
+    protected static final @NotNull UserDto TEST_ADMIN = new UserDto(UUID.randomUUID(), null,null,"Default Test Admin", "admin@example.com", UserRole.ADMIN);
+    protected static final @NotNull UserDto TEST_USER = new UserDto(UUID.randomUUID(), null,null,"Default Test User", "user@example.com", UserRole.USER);
 
     @Autowired
     private @NotNull UserService userService;
@@ -141,8 +142,8 @@ public abstract class IntegrationTest {
     }
 
     private void prepareTestData() {
-        userService.storeUser(TEST_USER);
         userService.storeUser(TEST_ADMIN);
+        userService.storeUser(TEST_USER);
     }
 
     /**

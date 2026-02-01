@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration
+        xmlns="http://www.jooq.org/xsd/jooq-codegen-3.20.1.xsd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+    http://www.jooq.org/xsd/jooq-codegen-3.20.1.xsd
+    https://www.jooq.org/xsd/jooq-codegen-3.20.1.xsd">
+
+    <jdbc>
+        <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
+        <url>jdbc:tc:mariadb:lts:///jooq?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:src/main/resources/db/migration/R__rebuild-schema.sql</url>
+        <user>test</user>
+        <password>test</password>
+    </jdbc>
+
+    <generator>
+        <database>
+            <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
+
+            <inputSchema>jooq</inputSchema>
+            <outputSchemaToDefault>true</outputSchemaToDefault>
+
+            <forcedTypes>
+                <forcedType>
+                    <includeTypes>VARCHAR</includeTypes>
+                    <includeExpression>(^id$|.*_id$)</includeExpression>
+                    <userType>java.util.UUID</userType>
+                    <converter>eu.ijug.dukeops.jooq.UUIDConverter</converter>
+                </forcedType>
+            </forcedTypes>
+
+            <properties>
+                <property>
+                    <key>sort</key>
+                    <value>semantic</value>
+                </property>
+            </properties>
+        </database>
+
+        <strategy>
+            <matchers>
+                <tables>
+                    <table>
+                        <expression>^(CLUBDESK|USER)$</expression>
+                        <recordImplements>
+                            eu.ijug.dukeops.jooq.RecordWithTimestamps
+                        </recordImplements>
+                    </table>
+                </tables>
+            </matchers>
+        </strategy>
+
+        <generate>
+            <validationAnnotations>true</validationAnnotations>
+            <javaTimeTypes>true</javaTimeTypes>
+        </generate>
+
+        <target>
+            <packageName>eu.ijug.dukeops.db</packageName>
+            <directory>target/generated-sources/jooq</directory>
+        </target>
+    </generator>
+</configuration>

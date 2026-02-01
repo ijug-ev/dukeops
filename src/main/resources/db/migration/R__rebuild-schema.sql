@@ -7,6 +7,8 @@ DROP TABLE IF EXISTS user;
 
 CREATE TABLE user (
     id VARCHAR(36) NOT NULL,
+    created TIMESTAMP NOT NULL,
+    updated TIMESTAMP NOT NULL,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     role VARCHAR(255) NOT NULL DEFAULT 'USER',
@@ -16,8 +18,10 @@ CREATE TABLE user (
 );
 
 CREATE TABLE clubdesk (
-    user_id VARCHAR(36) NOT NULL,
-
+    id VARCHAR(36) NOT NULL,
+    created TIMESTAMP NOT NULL,
+    updated TIMESTAMP NOT NULL,
+    
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL,
@@ -45,8 +49,8 @@ CREATE TABLE clubdesk (
     jug VARCHAR(255) DEFAULT NULL,
 
     CHECK (country IN ('Deutschland', 'Österreich', 'Schweiz')),
-    PRIMARY KEY (user_id),
+    PRIMARY KEY (id),
     CONSTRAINT fk_clubdesk_user
-        FOREIGN KEY (user_id)
+        FOREIGN KEY (id)
             REFERENCES user (id)
 );

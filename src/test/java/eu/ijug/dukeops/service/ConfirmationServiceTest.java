@@ -107,7 +107,7 @@ class ConfirmationServiceTest {
             return null;
         }).when(mailService).sendMail(any(), any(), any());
 
-        final var testUser = new UserDto("Test User", "test@example.com", UserRole.USER);
+        final var testUser = new UserDto(UUID.randomUUID(), null,null,"Test User", "test@example.com", UserRole.USER);
         final var userService = mock(UserService.class);
         when(userService.getUserByEmail(any())).thenReturn(Optional.of(testUser));
 

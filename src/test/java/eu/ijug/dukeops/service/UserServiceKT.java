@@ -17,12 +17,12 @@
  */
 package eu.ijug.dukeops.service;
 
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import eu.ijug.dukeops.entity.UserDto;
 import eu.ijug.dukeops.entity.UserRole;
 import eu.ijug.dukeops.test.KaribuTest;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,7 +36,8 @@ class UserServiceKT extends KaribuTest {
     void crud() {
         final var originalUserCount = userService.getAllUsers().size();
 
-        var testUser = new UserDto("Test User", "test@example.com", UserRole.USER);
+        var testUser = new UserDto(null, null, null,
+                "Test User", "test@example.com", UserRole.USER);
         userService.storeUser(testUser);
 
         testUser = userService.getUserByEmail("test@example.com").orElseThrow();
@@ -48,7 +49,8 @@ class UserServiceKT extends KaribuTest {
 
         assertThat(userService.getAllUsers().size()).isEqualTo(originalUserCount + 1);
 
-        testUser = new UserDto("Updated Test User", testUser.email(), testUser.role());
+        testUser = new UserDto(testUser.id(), testUser.created(), testUser.updated(),
+                "Updated Test User", testUser.email(), testUser.role());
         userService.storeUser(testUser);
 
         testUser = userService.getUserByEmail("test@example.com").orElseThrow();
