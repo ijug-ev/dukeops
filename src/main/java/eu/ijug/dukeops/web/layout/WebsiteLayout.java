@@ -23,7 +23,8 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.RouterLayout;
-import eu.ijug.dukeops.service.AuthenticationService;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.web.infra.Navigator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +32,7 @@ import eu.ijug.dukeops.config.AppConfig;
 import eu.ijug.dukeops.entity.AuthenticationSignal;
 import eu.ijug.dukeops.util.ThemeUtil;
 
+@AnonymousAllowed
 public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnterObserver {
 
     private final @NotNull Main main;

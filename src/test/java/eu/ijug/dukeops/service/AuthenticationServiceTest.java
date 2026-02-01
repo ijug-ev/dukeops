@@ -22,6 +22,7 @@ import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.entity.AuthenticationSignal;
 import eu.ijug.dukeops.entity.UserDto;
 import eu.ijug.dukeops.entity.UserPrincipal;

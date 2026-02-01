@@ -15,16 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-.navigation-bar {
-    padding: var(--lumo-space-m);
-    border-bottom: 1px solid var(--lumo-contrast-10pct);
+.page-header {
+    padding: var(--vaadin-padding-m);
+    border-bottom: 1px solid var(--vaadin-border-color);
 }
 
-.navigation-bar .menu-bar {
-    display: flex;
-    gap: var(--lumo-space-m);
-}
-
-.navigation-bar vaadin-avatar {
+.page-header .logo {
     cursor: pointer;
+    height: 80px;
+    width: auto;
+}
+
+.page-header .logo-link {
+    display: flex;
+    align-items: center;
+}
+
+.page-header h1,
+.page-header h2 {
+    margin: 0;
 }

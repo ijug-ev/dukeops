@@ -25,7 +25,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.server.VaadinSession;
+import eu.ijug.dukeops.entity.UserDto;
+import eu.ijug.dukeops.entity.UserPrincipal;
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
@@ -37,12 +39,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import eu.ijug.dukeops.entity.UserDto;
-import eu.ijug.dukeops.entity.UserPrincipal;
-import eu.ijug.dukeops.entity.UserRole;
-import eu.ijug.dukeops.service.AuthenticationService;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -134,25 +132,22 @@ public abstract class KaribuTest extends IntegrationTest {
      * @param user the user to log in
      */
     protected void login(final @NotNull UserDto user) {
-        final var roles = new ArrayList<GrantedAuthority>();
-        roles.add(new SimpleGrantedAuthority(UserRole.USER.getRole()));
-        if (user.role().equals(UserRole.ADMIN)) {
-            roles.add(new SimpleGrantedAuthority(UserRole.ADMIN.getRole()));
-        }
+        final var roleNames = List.of(user.role().getRole());
+        final var authorities = roleNames.stream()
+                .map(roleName -> (GrantedAuthority) new SimpleGrantedAuthority(roleName))
+                .toList();
 
         // create a Spring Security user (UserDetails)
-        final var userPrincipal = new UserPrincipal(user, roles);
+        final var userPrincipal = new UserPrincipal(user, authorities);
 
         // create the authentication token
-        final var authentication = new PreAuthenticatedAuthenticationToken(userPrincipal, null, roles);
+        final var authentication = new PreAuthenticatedAuthenticationToken(userPrincipal, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // make ViewAccessChecker work
         final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();
         request.setUserPrincipalInt(authentication);
-        request.setUserInRole((_, role) -> roles.stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(roleName -> roleName.equals("ROLE_" + role)));
+        request.setUserInRole((_, role) -> roleNames.contains("ROLE_" + role));
     }
 
     /**

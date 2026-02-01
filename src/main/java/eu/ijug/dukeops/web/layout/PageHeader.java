@@ -25,7 +25,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import eu.ijug.dukeops.service.AuthenticationService;
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.web.infra.Navigator;
 import eu.ijug.dukeops.web.view.DashboardView;
 import eu.ijug.dukeops.web.view.LoginView;

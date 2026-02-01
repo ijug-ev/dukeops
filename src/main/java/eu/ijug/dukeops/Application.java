@@ -17,24 +17,26 @@
  */
 package eu.ijug.dukeops;
 
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.aura.Aura;
+import eu.ijug.dukeops.config.AppConfig;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import eu.ijug.dukeops.config.AppConfig;
 
 /**
  * The entry point of the Spring Boot application.
  */
 @Push
-@Theme(value = "dukeops")
+@StyleSheet(Aura.STYLESHEET)
+@StyleSheet("css/styles.css")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes, viewport-fit=cover")
 @PWA(name = "DukeOps - iJUG Self-Service Portal", shortName = "DukeOps")
 @EnableScheduling

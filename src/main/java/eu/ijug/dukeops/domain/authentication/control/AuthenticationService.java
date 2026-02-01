@@ -15,12 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.service;
+package eu.ijug.dukeops.domain.authentication.control;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
+import eu.ijug.dukeops.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ import eu.ijug.dukeops.entity.AuthenticationSignal;
 import eu.ijug.dukeops.entity.UserDto;
 import eu.ijug.dukeops.entity.UserPrincipal;
 import eu.ijug.dukeops.entity.UserRole;
-import eu.ijug.dukeops.security.SecurityConfig;
+import eu.ijug.dukeops.SecurityConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;

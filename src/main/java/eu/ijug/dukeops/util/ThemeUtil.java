@@ -18,7 +18,7 @@
 package eu.ijug.dukeops.util;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.component.page.ColorScheme;
 import org.jetbrains.annotations.NotNull;
 
 public final class ThemeUtil {
@@ -36,16 +36,15 @@ public final class ThemeUtil {
     }
 
     public static boolean isDarkModeActive(final @NotNull UI ui) {
-        return ui.getElement().getThemeList().contains(Lumo.DARK);
+        return ui.getPage().getColorScheme().equals(ColorScheme.Value.DARK);
     }
 
     public static void toggleDarkMode(final @NotNull UI ui) {
-        final var themeList = ui.getElement().getThemeList();
         if (isDarkModeActive(ui)) {
-            themeList.remove(Lumo.DARK);
+            ui.getPage().setColorScheme(ColorScheme.Value.LIGHT);
             LocalStorageUtil.setBoolean(ui, DARK_MODE, false);
         } else {
-            themeList.add(Lumo.DARK);
+            ui.getPage().setColorScheme(ColorScheme.Value.DARK);
             LocalStorageUtil.setBoolean(ui, DARK_MODE, true);
         }
     }

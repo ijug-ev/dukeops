@@ -18,21 +18,19 @@
 package eu.ijug.dukeops.util;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.dom.ThemeList;
-import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.component.page.ColorScheme;
+import com.vaadin.flow.component.page.Page;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -41,37 +39,33 @@ import static org.mockito.Mockito.when;
 class ThemeUtilTest {
 
     private UI uiMock;
-    private ThemeList themeListMock;
+    private Page page;
 
     @BeforeEach
     void setup() {
-        uiMock = Mockito.mock(UI.class);
-        themeListMock = Mockito.mock(ThemeList.class);
-
-        final var elementMock = Mockito.mock(Element.class);
-        when(uiMock.getElement()).thenReturn(elementMock);
-        when(elementMock.getThemeList()).thenReturn(themeListMock);
-
+        uiMock = mock(UI.class);
+        page = mock(Page.class);
+        when(uiMock.getPage()).thenReturn(page);
         UI.setCurrent(uiMock);
     }
 
     @Test
     void testIsDarkModeActive() {
-        when(themeListMock.contains(Lumo.DARK)).thenReturn(true);
+        when(page.getColorScheme()).thenReturn(ColorScheme.Value.DARK);
         assertThat(ThemeUtil.isDarkModeActive(uiMock)).isTrue();
 
-        when(themeListMock.contains(Lumo.DARK)).thenReturn(false);
+        when(page.getColorScheme()).thenReturn(ColorScheme.Value.LIGHT);
         assertThat(ThemeUtil.isDarkModeActive(uiMock)).isFalse();
     }
 
     @Test
     void testToggleDarkModeActivatesDarkMode() {
         try (MockedStatic<LocalStorageUtil> mockedLocalStorage = mockStatic(LocalStorageUtil.class)) {
-            when(themeListMock.contains(Lumo.DARK)).thenReturn(false);
+            when(page.getColorScheme()).thenReturn(ColorScheme.Value.LIGHT);
 
             ThemeUtil.toggleDarkMode(uiMock);
 
-            verify(themeListMock).add(Lumo.DARK);
+            verify(page).setColorScheme(ColorScheme.Value.DARK);
             mockedLocalStorage.verify(() -> LocalStorageUtil.setBoolean(uiMock, "dark-mode", true));
         }
     }
@@ -79,11 +73,11 @@ class ThemeUtilTest {
     @Test
     void testToggleDarkModeDeactivatesDarkMode() {
         try (MockedStatic<LocalStorageUtil> mockedLocalStorage = mockStatic(LocalStorageUtil.class)) {
-            when(themeListMock.contains(Lumo.DARK)).thenReturn(true);
+            when(page.getColorScheme()).thenReturn(ColorScheme.Value.DARK);
 
             ThemeUtil.toggleDarkMode(uiMock);
 
-            verify(themeListMock).remove(Lumo.DARK);
+            verify(page).setColorScheme(ColorScheme.Value.LIGHT);
             mockedLocalStorage.verify(() -> LocalStorageUtil.setBoolean(uiMock, "dark-mode", false));
         }
     }
@@ -98,11 +92,11 @@ class ThemeUtilTest {
                 return null;
             });
 
-            when(themeListMock.contains(Lumo.DARK)).thenReturn(false);
+            when(page.getColorScheme()).thenReturn(ColorScheme.Value.LIGHT);
 
             ThemeUtil.initializeDarkMode(uiMock);
 
-            verify(themeListMock).add(Lumo.DARK);
+            verify(page).setColorScheme(ColorScheme.Value.DARK);
         }
     }
 
@@ -116,11 +110,11 @@ class ThemeUtilTest {
                 return null;
             });
 
-            when(themeListMock.contains(Lumo.DARK)).thenReturn(false);
+            when(page.getColorScheme()).thenReturn(ColorScheme.Value.LIGHT);
 
             ThemeUtil.initializeDarkMode(uiMock);
 
-            verify(themeListMock, never()).add(Lumo.DARK);
+            verify(page, never()).setColorScheme(any());
         }
     }
 
@@ -135,11 +129,11 @@ class ThemeUtilTest {
                 return null;
             });
 
-            when(themeListMock.contains(Lumo.DARK)).thenReturn(true);
+            when(page.getColorScheme()).thenReturn(ColorScheme.Value.DARK);
 
             ThemeUtil.initializeDarkMode(uiMock);
 
-            verify(themeListMock, never()).add(anyString());
+            verify(page, never()).setColorScheme(any());
         }
     }
 

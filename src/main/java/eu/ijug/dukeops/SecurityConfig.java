@@ -15,20 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.security;
+package eu.ijug.dukeops;
 
-import com.vaadin.flow.spring.security.VaadinAwareSecurityContextHolderStrategyConfiguration;
 import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
+import eu.ijug.dukeops.web.view.LoginView;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import eu.ijug.dukeops.web.view.LoginView;
 
 /**
  * <p>Security configuration for the DukeOps application.</p>
@@ -39,8 +36,6 @@ import eu.ijug.dukeops.web.view.LoginView;
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
-@Import(VaadinAwareSecurityContextHolderStrategyConfiguration.class)
 public class SecurityConfig {
 
     /**
@@ -62,10 +57,9 @@ public class SecurityConfig {
      *
      * @param http the {@link HttpSecurity} to modify
      * @return the built {@link SecurityFilterChain}
-     * @throws Exception if an error occurs while configuring security
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) {
         // Always create a session
         http.sessionManagement(configurer -> configurer
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
@@ -75,7 +69,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/.well-known/**",
-                        "/actuator/health"
+                        "/actuator/health",
+                        "/css/**",
+                        "/icons/**"
                 ).permitAll()
         );
 
@@ -87,5 +83,4 @@ public class SecurityConfig {
         // Build and return the filter chain
         return http.build();
     }
-
 }

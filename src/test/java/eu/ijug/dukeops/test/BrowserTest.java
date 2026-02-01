@@ -26,7 +26,7 @@ import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.ReducedMotion;
 import com.microsoft.playwright.options.ScreenshotType;
 import eu.ijug.dukeops.entity.UserDto;
-import eu.ijug.dukeops.security.SecurityConfig;
+import eu.ijug.dukeops.SecurityConfig;
 import eu.ijug.dukeops.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
