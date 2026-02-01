@@ -42,10 +42,6 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
-
-import static eu.ijug.dukeops.test.TestUtil.TEST_TIME_ZONE;
-import static eu.ijug.dukeops.util.TimeZoneUtil.SESSION_TIME_ZONE_KEY;
 
 /**
  * An abstract class which sets up Spring, Karibu-Testing and our app.
@@ -73,11 +69,6 @@ public abstract class KaribuTest extends IntegrationTest {
         final var servlet = new MockSpringServlet(routes, applicationContext, uiFactory);
         MockVaadin.setup(uiFactory, servlet);
         UI.getCurrent().setLocale(Locale.ENGLISH);
-
-        final var timeZone = TimeZone.getTimeZone(TEST_TIME_ZONE.getId());
-        TimeZone.setDefault(timeZone);
-        System.setProperty("user.timezone", timeZone.getID());
-        VaadinSession.getCurrent().setAttribute(SESSION_TIME_ZONE_KEY, TEST_TIME_ZONE);
     }
 
     @AfterEach
