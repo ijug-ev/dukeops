@@ -702,7 +702,7 @@
                     <javaVersion>${java.version}</javaVersion>
                     <failOnViolations>true</failOnViolations>
                     <includeTestClasses>true</includeTestClasses>
-                    <ignorePackages>eu.ijug.dukeops.db</ignorePackages>
+                    <ignorePackages>eu.ijug.dukeops.infra.persistence.jooq.generated</ignorePackages>
                 </configuration>
                 <executions>
                     <execution>
@@ -756,7 +756,7 @@
                 <version>0.8.14</version>
                 <configuration>
                     <excludes>
-                        <exclude>eu/ijug/dukeops/db/**</exclude>
+                        <exclude>eu/ijug/dukeops/infra/persistence/jooq/generated/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

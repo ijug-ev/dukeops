@@ -25,7 +25,7 @@
                     <includeTypes>VARCHAR</includeTypes>
                     <includeExpression>(^id$|.*_id$)</includeExpression>
                     <userType>java.util.UUID</userType>
-                    <converter>eu.ijug.dukeops.jooq.UUIDConverter</converter>
+                    <converter>eu.ijug.dukeops.infra.persistence.jooq.UUIDConverter</converter>
                 </forcedType>
             </forcedTypes>
 
@@ -43,7 +43,7 @@
                     <table>
                         <expression>^(CLUBDESK|USER)$</expression>
                         <recordImplements>
-                            eu.ijug.dukeops.jooq.RecordWithTimestamps
+                            eu.ijug.dukeops.infra.persistence.jooq.RecordWithTimestamps
                         </recordImplements>
                     </table>
                 </tables>
@@ -56,7 +56,7 @@
         </generate>
 
         <target>
-            <packageName>eu.ijug.dukeops.db</packageName>
+            <packageName>eu.ijug.dukeops.infra.persistence.jooq.generated</packageName>
             <directory>target/generated-sources/jooq</directory>
         </target>
     </generator>

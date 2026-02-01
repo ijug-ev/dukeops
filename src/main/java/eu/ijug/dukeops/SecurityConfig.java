@@ -18,7 +18,7 @@
 package eu.ijug.dukeops;
 
 import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
-import eu.ijug.dukeops.web.view.LoginView;
+import eu.ijug.dukeops.domain.authentication.boundary.LoginView;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

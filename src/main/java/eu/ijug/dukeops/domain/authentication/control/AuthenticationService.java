@@ -21,7 +21,12 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
-import eu.ijug.dukeops.service.UserService;
+import eu.ijug.dukeops.SecurityConfig;
+import eu.ijug.dukeops.domain.authentication.entity.AuthenticationSignal;
+import eu.ijug.dukeops.domain.authentication.entity.UserPrincipal;
+import eu.ijug.dukeops.domain.user.control.UserService;
+import eu.ijug.dukeops.domain.user.entity.UserDto;
+import eu.ijug.dukeops.domain.user.entity.UserRole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -34,11 +39,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
-import eu.ijug.dukeops.entity.AuthenticationSignal;
-import eu.ijug.dukeops.entity.UserDto;
-import eu.ijug.dukeops.entity.UserPrincipal;
-import eu.ijug.dukeops.entity.UserRole;
-import eu.ijug.dukeops.SecurityConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;

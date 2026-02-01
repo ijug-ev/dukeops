@@ -17,11 +17,11 @@
  */
 package eu.ijug.dukeops;
 
+import eu.ijug.dukeops.test.BrowserTest;
+import eu.ijug.dukeops.infra.ui.vaadin.control.LinkUtil;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
-import eu.ijug.dukeops.test.BrowserTest;
-import eu.ijug.dukeops.util.LinkUtil;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

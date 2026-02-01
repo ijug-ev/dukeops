@@ -19,10 +19,10 @@ package eu.ijug.dukeops.domain.authentication.control;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import eu.ijug.dukeops.i18n.TranslationProvider;
-import eu.ijug.dukeops.service.MailService;
-import eu.ijug.dukeops.service.UserService;
-import eu.ijug.dukeops.util.LinkUtil;
+import eu.ijug.dukeops.domain.user.control.UserService;
+import eu.ijug.dukeops.infra.communication.mail.MailService;
+import eu.ijug.dukeops.infra.ui.vaadin.i18n.TranslationProvider;
+import eu.ijug.dukeops.infra.ui.vaadin.control.LinkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;

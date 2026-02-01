@@ -29,7 +29,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import eu.ijug.dukeops.config.AppConfig;
+import eu.ijug.dukeops.infra.config.AppConfig;
 import eu.ijug.dukeops.test.BrowserTest;
 import eu.ijug.dukeops.test.KaribuTest;
 import jakarta.annotation.security.PermitAll;
@@ -73,11 +73,11 @@ class ArchitectureTest {
         noClasses()
                 .that()
                 .resideOutsideOfPackages(
-                        "eu.ijug.dukeops.service..", // service layer
-                        "eu.ijug.dukeops.db..") // jOOQ generated classes
+                        "..control..", // service layer
+                        "eu.ijug.dukeops.infra.persistence.jooq.generated..") // jOOQ generated classes
                 .should()
                 .accessClassesThat()
-                .resideInAnyPackage("eu.ijug.dukeops.db..")
+                .resideInAnyPackage("eu.ijug.dukeops.infra.persistence.jooq.generated..")
                 .because("only the service layer and jOOQ code should access jOOQ types directly")
                 .check(classesWithoutTests);
     }
@@ -85,7 +85,7 @@ class ArchitectureTest {
     @Test
     void servicesShouldNotReturnStreams() {
         methods()
-                .that().areDeclaredInClassesThat().resideInAPackage("eu.ijug.dukeops.service..")
+                .that().areDeclaredInClassesThat().resideInAPackage("..control..")
                 .and().arePublic()
                 .and().areNotDeclaredIn(Object.class)
                 .should().notHaveRawReturnType(Stream.class)
@@ -110,7 +110,7 @@ class ArchitectureTest {
 
         classes()
                 .that()
-                .resideInAPackage("eu.ijug.dukeops.entity..")
+                .resideInAPackage("..entity..")
                 .and().haveSimpleNameEndingWith("Dto")
                 .should(beRecordOrEnum)
                 .because("DTOs should be implemented as Java records or enums to ensure immutability and clarity")
@@ -243,7 +243,7 @@ class ArchitectureTest {
     @Test
     void localeGetLanguageShouldOnlyBeUsedInLocaleUtil() {
         final var forbiddenMethod = "getLanguage";
-        final var allowedClass = "eu.ijug.dukeops.util.LocaleUtil";
+        final var allowedClass = "eu.ijug.dukeops.infra.ui.vaadin.i18n.LocaleUtil";
 
         final var onlyLocaleUtilMayCallGetLanguage = new ArchCondition<JavaClass>(
                 "only LocaleUtil may call Locale.getLanguage()") {
@@ -276,7 +276,7 @@ class ArchitectureTest {
     @Test
     void appConfigBaseUrlShouldOnlyBeUsedInLinkUtil() {
         final var forbiddenMethod = "baseUrl";
-        final var allowedClass = "eu.ijug.dukeops.web.init.LinkUtilInitializer";
+        final var allowedClass = "eu.ijug.dukeops.infra.ui.vaadin.init.LinkUtilInitializer";
 
         final var onlyLinkUtilMayCallBaseUrl = new ArchCondition<JavaClass>(
                 "only LinkUtil may call AppConfig.baseUrl()") {
@@ -309,7 +309,7 @@ class ArchitectureTest {
     @Test
     void uiNavigateShouldOnlyBeUsedInNavigator() {
         final var forbiddenMethod = "navigate";
-        final var allowedClass = "eu.ijug.dukeops.web.infra.Navigator";
+        final var allowedClass = "eu.ijug.dukeops.infra.ui.vaadin.control.Navigator";
 
         final var onlyNavigatorMayCallUiNavigate = new ArchCondition<JavaClass>(
                 "only Navigator may call UI.navigate(..)") {
