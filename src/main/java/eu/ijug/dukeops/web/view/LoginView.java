@@ -74,6 +74,8 @@ public final class LoginView extends AbstractView {
         binder.setBean(new DummyBean());
         binder.addStatusChangeListener(_ -> submitButton.setEnabled(binder.isValid()));
         binder.validate();
+
+        emailField.focus();
     }
 
     @Override
