@@ -27,8 +27,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class NavigationBarBT extends BrowserTest {
 
     protected static final String DARK_MODE_BUTTON_SELECTOR = "vaadin-button.theme-toggle-button";
-    protected static final String TITLE_COLOR_LIGHT_MODE = "rgb(25, 36, 52)";
-    protected static final String TITLE_COLOR_DARK_MODE = "rgb(245, 249, 255)";
+    protected static final String TITLE_COLOR_LIGHT_MODE = "oklch(1 0.002 260)";
+    protected static final String TITLE_COLOR_DARK_MODE = "oklch(0.15 0.0038 248)";
 
     @Test
     @SuppressWarnings("java:S2925") // suppress warning about Thread.sleep, as this is a test for UI interaction
