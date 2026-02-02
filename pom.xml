@@ -201,6 +201,11 @@
             <version>20250517</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.14.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -550,6 +555,42 @@
                             </includes>
 
                             <excludes>
+                                <exclude>**/*IT.java</exclude>
+                                <exclude>**/*KT.java</exclude>
+                                <exclude>**/*BT.java</exclude>
+                            </excludes>
+
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+
+                            <properties>
+                                <configurationParameters>
+                                    junit.jupiter.execution.parallel.enabled = false
+                                    junit.jupiter.execution.parallel.mode.default = same_thread
+                                    junit.jupiter.execution.parallel.mode.classes.default = same_thread
+                                </configurationParameters>
+                            </properties>
+
+                            <trimStackTrace>false</trimStackTrace>
+                            <enableAssertions>true</enableAssertions>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>integration-tests</id>
+
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+
+                        <configuration>
+                            <includes>
+                                <include>**/*IT.java</include>
+                            </includes>
+
+                            <excludes>
+                                <exclude>**/*Test.java</exclude>
                                 <exclude>**/*KT.java</exclude>
                                 <exclude>**/*BT.java</exclude>
                             </excludes>
@@ -585,6 +626,7 @@
 
                             <excludes>
                                 <exclude>**/*Test.java</exclude>
+                                <exclude>**/*IT.java</exclude>
                                 <exclude>**/*BT.java</exclude>
                             </excludes>
 
@@ -619,6 +661,7 @@
 
                             <excludes>
                                 <exclude>**/*Test.java</exclude>
+                                <exclude>**/*IT.java</exclude>
                                 <exclude>**/*KT.java</exclude>
                             </excludes>
 

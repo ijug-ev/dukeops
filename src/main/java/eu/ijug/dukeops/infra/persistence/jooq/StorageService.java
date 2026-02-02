@@ -67,6 +67,7 @@ public abstract class StorageService {
     protected void createOrUpdate(final @NotNull TableImpl<? extends RecordWithTimestamps> table,
                                   final @NotNull Record dto,
                                   final @NotNull RecordWithTimestamps record) {
+        final var existingCreated = record.getCreated();
         record.from(dto);
 
         if (record.getId() == null) { // NOSONAR (false positive: ID may be null for new records)
@@ -78,6 +79,7 @@ public abstract class StorageService {
             record.setCreated(now);
             record.setUpdated(now);
         } else {
+            record.setCreated(existingCreated);
             record.setUpdated(now);
         }
         record.store();

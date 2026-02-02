@@ -197,6 +197,17 @@ public final class TestUtil {
         }
     }
 
+    public static @NotNull <T extends Component> T findChildByClassName(final Component root,
+                                                                        final Class<T> type,
+                                                                        final String className) {
+        return root.getChildren()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .filter(c -> c.getClassNames().contains(className))
+                .findFirst()
+                .orElseThrow();
+    }
+
     private TestUtil() {
         throw new IllegalStateException("Utility class");
     }

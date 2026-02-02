@@ -27,14 +27,26 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * <p>Spring-managed service responsible for sending plain text emails using {@link JavaMailSender}.</p>
+ *
+ * <p>The service uses mail configuration provided by {@link AppConfig} and applies optional reply-to handling.
+ * Errors during mail delivery are logged but not propagated to the caller.</p>
+ */
 @Service
-public final class MailService {
+public class MailService {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(MailService.class);
 
     private final @NotNull MailConfig mailConfig;
     private final @NotNull JavaMailSender mailSender;
 
+    /**
+     * <p>Creates a new mail service using the application configuration and the configured mail sender.</p>
+     *
+     * @param appConfig the application configuration providing mail-related settings
+     * @param mailSender the Java mail sender used to dispatch emails
+     */
     public MailService(final @NotNull AppConfig appConfig,
                        final @NotNull JavaMailSender mailSender) {
         super();
@@ -42,6 +54,16 @@ public final class MailService {
         this.mailSender = mailSender;
     }
 
+    /**
+     * <p>Sends a plain text email to the specified recipient.</p>
+     *
+     * <p>The email is sent using UTF-8 encoding. If a reply-to address is configured, it is applied to the message.
+     * Any exception during message creation or sending is logged and swallowed.</p>
+     *
+     * @param email the recipient email address
+     * @param subject the subject of the email
+     * @param text the plain text body of the email
+     */
     public void sendMail(final @NotNull String email,
                          final @NotNull String subject,
                          final @NotNull String text) {

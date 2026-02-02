@@ -23,15 +23,30 @@ import eu.ijug.dukeops.infra.ui.vaadin.control.LinkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>Initializes {@link LinkUtil} with the configured base URL when a Vaadin {@link UI} is created.</p>
+ *
+ * <p>If {@link AppConfig#baseUrl()} is blank, no base URL is set and {@link LinkUtil} keeps its default behavior.</p>
+ */
 @Component
-public final class LinkUtilInitializer implements UIInitializer {
+public class LinkUtilInitializer implements UIInitializer {
 
     private final @NotNull AppConfig appConfig;
 
+    /**
+     * <p>Creates a new initializer using the provided application configuration.</p>
+     *
+     * @param appConfig the application configuration containing the base URL
+     */
     public LinkUtilInitializer(final @NotNull AppConfig appConfig) {
         this.appConfig = appConfig;
     }
 
+    /**
+     * <p>Configures {@link LinkUtil} with the base URL from {@link AppConfig} for the current application instance.</p>
+     *
+     * @param ui the Vaadin UI instance being initialized
+     */
     @Override
     public void initialize(final @NotNull UI ui) {
         final var baseUrl = appConfig.baseUrl();

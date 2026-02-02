@@ -30,27 +30,63 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-
+/**
+ * <p>Spring-managed {@link I18NProvider} implementation that provides translations
+ * for Vaadin UI components based on Java {@link ResourceBundle}s.</p>
+ *
+ * <p>Translations are loaded from property files located under
+ * {@code src/main/resources/vaadin-i18n/} and support both positional and named parameters
+ * using ICU {@link MessageFormat}.</p>
+ */
 @Component
-public final class TranslationProvider implements I18NProvider {
+public class TranslationProvider implements I18NProvider {
 
-    // src/main/resources/vaadin-i18n/translations*.properties
+    /**
+     * <p>Base name of the resource bundles containing the translations.</p>
+     */
     private static final @NotNull String BUNDLE_BASENAME =
             com.vaadin.flow.i18n.DefaultI18NProvider.BUNDLE_FOLDER + "."
                     + com.vaadin.flow.i18n.DefaultI18NProvider.BUNDLE_FILENAME;
 
+    /**
+     * <p>List of locales that are supported by this translation provider.</p>
+     */
     private static final @NotNull List<Locale> PROVIDED_LOCALES = List.of(
             Locale.ENGLISH, Locale.GERMAN);
 
+    /**
+     * <p>Creates a new {@code TranslationProvider} and sets the JVM default locale to English.</p>
+     *
+     * <p>This ensures a deterministic fallback behaviour in case no locale is explicitly provided.</p>
+     */
     public TranslationProvider() {
         Locale.setDefault(Locale.ENGLISH);
     }
 
+    /**
+     * <p>Returns the list of locales supported by this {@link I18NProvider}.</p>
+     *
+     * @return an immutable list of provided locales
+     */
     @Override
     public @NotNull List<Locale> getProvidedLocales() {
         return PROVIDED_LOCALES;
     }
 
+    /**
+     * <p>Resolves a translation for the given key and locale and applies optional parameters.</p>
+     *
+     * <p>If no locale is provided, English is used as the default. When a translation key is missing, a placeholder
+     * string is returned instead of throwing an exception.</p>
+     *
+     * <p>Parameter substitution supports positional arguments ({@code {0}, {1}, ...}) and named arguments when a
+     * single {@link Map} is provided.</p>
+     *
+     * @param key the translation key to resolve
+     * @param locale the locale to use, or {@code null} to fall back to English
+     * @param params optional parameters for message formatting
+     * @return the resolved and formatted translation, or a placeholder if the key is missing
+     */
     @Override
     public @NotNull String getTranslation(final @NotNull String key,
                                           final @Nullable Locale locale,

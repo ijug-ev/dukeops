@@ -22,9 +22,19 @@ import eu.ijug.dukeops.infra.ui.vaadin.i18n.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>Initializes {@link LocaleUtil} for a newly created Vaadin {@link UI} by detecting the client locale.</p>
+ *
+ * <p>The detected locale is used to configure locale-dependent behavior such as translations and formatting.</p>
+ */
 @Component
-public final class LocaleUtilInitializer implements UIInitializer {
+public class LocaleUtilInitializer implements UIInitializer {
 
+    /**
+     * <p>Detects and applies the client locale for the given Vaadin {@link UI} instance.</p>
+     *
+     * @param ui the Vaadin UI instance being initialized
+     */
     @Override
     public void initialize(final @NotNull UI ui) {
         LocaleUtil.detectClientLocale(ui);

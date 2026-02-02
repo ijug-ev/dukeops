@@ -15,25 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.infra.ui.vaadin.init;
+package eu.ijug.dukeops.domain.user.control;
 
-import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * <p>Functional interface for performing initialization logic on a newly created Vaadin {@link UI} instance.</p>
- *
- * <p>Implementations are invoked during UI creation to apply cross-cutting UI-related configuration such as locale
- * detection, link configuration, or other UI-scoped setup tasks.</p>
- */
-@FunctionalInterface
-public interface UIInitializer {
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-    /**
-     * <p>Applies initialization logic to the given Vaadin {@link UI} instance.</p>
-     *
-     * @param ui the Vaadin UI instance to initialize
-     */
-    void initialize(@NotNull UI ui);
+public final class FullNameBuilder {
+
+    private FullNameBuilder() {
+        super();
+    }
+
+    public static @NotNull String buildFullName(final @Nullable String firstname,
+                                                final @Nullable String lastname,
+                                                final @NotNull String fallback) {
+        final String fullName = Stream.of(firstname, lastname)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.joining(" "));
+
+        return fullName.isEmpty() ? fallback : fullName;
+    }
 
 }

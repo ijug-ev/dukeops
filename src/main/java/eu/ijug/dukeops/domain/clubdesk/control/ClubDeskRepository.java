@@ -15,25 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.infra.ui.vaadin.init;
+package eu.ijug.dukeops.domain.clubdesk.control;
 
-import com.vaadin.flow.component.UI;
+import eu.ijug.dukeops.domain.clubdesk.entity.ClubDeskDto;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * <p>Functional interface for performing initialization logic on a newly created Vaadin {@link UI} instance.</p>
- *
- * <p>Implementations are invoked during UI creation to apply cross-cutting UI-related configuration such as locale
- * detection, link configuration, or other UI-scoped setup tasks.</p>
- */
-@FunctionalInterface
-public interface UIInitializer {
+public interface ClubDeskRepository {
 
-    /**
-     * <p>Applies initialization logic to the given Vaadin {@link UI} instance.</p>
-     *
-     * @param ui the Vaadin UI instance to initialize
-     */
-    void initialize(@NotNull UI ui);
+    @NotNull ClubDeskDto upsert(@NotNull ClubDeskDto clubDesk);
 
 }

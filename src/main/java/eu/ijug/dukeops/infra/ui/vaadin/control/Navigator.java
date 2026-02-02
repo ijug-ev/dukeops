@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * Navigator is a simple utility component to handle navigation within the Vaadin UI.
  */
 @org.springframework.stereotype.Component
-public final class Navigator {
+public class Navigator {
 
     /**
      * Navigates to the specified target component within the given UI.

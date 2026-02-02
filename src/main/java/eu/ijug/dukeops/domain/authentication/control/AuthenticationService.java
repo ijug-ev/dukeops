@@ -44,14 +44,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
+/**
+ * <p>Spring-managed service responsible for authentication and session handling within the Vaadin application.</p>
+ *
+ * <p>The service performs passwordless login based on a user's email address, stores the resulting
+ * {@link Authentication} in the Spring Security context, and persists it to the HTTP session when
+ * running in a Vaadin servlet request/response context.</p>
+ */
 @Service
-public final class AuthenticationService {
+public class AuthenticationService {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
 
     private final @NotNull UserService userService;
     private final @NotNull AuthenticationSignal authenticationSignal;
 
+    /**
+     * <p>Creates a new authentication service using the required collaborators.</p>
+     *
+     * @param userService the user service used to resolve users by email address
+     * @param authenticationSignal the signal used to update the UI about authentication state changes
+     */
     public AuthenticationService(final @NotNull UserService userService,
                                  final @NotNull AuthenticationSignal authenticationSignal) {
         super();
@@ -59,6 +72,16 @@ public final class AuthenticationService {
         this.authenticationSignal = authenticationSignal;
     }
 
+    /**
+     * <p>Logs in the user identified by the given email address using a passwordless authentication token.</p>
+     *
+     * <p>If the user exists, a {@link UserPrincipal} is created with the user's authorities, the Spring Security
+     * context is populated, and the context is persisted to the HTTP session when a Vaadin servlet request and
+     * response are available.</p>
+     *
+     * @param email the email address of the user to authenticate
+     * @return {@code true} if the user was found and logged in successfully, {@code false} otherwise
+     */
     public boolean login(final @NotNull String email) {
         final var optUser = userService.getUserByEmail(email);
         if (optUser.isEmpty()) {
@@ -132,18 +155,41 @@ public final class AuthenticationService {
         return Optional.empty();
     }
 
+    /**
+     * <p>Returns the currently logged-in user, if available.</p>
+     *
+     * @return an {@link Optional} containing the logged-in user if authenticated
+     */
     public @NotNull Optional<UserDto> getLoggedInUser() {
         return getUserPrincipal().map(UserPrincipal::getUser);
     }
 
+    /**
+     * <p>Indicates whether a user is currently logged in.</p>
+     *
+     * @return {@code true} if a user is authenticated, {@code false} otherwise
+     */
     public boolean isUserLoggedIn() {
         return getUserPrincipal().isPresent();
     }
 
+    /**
+     * <p>Logs out the current user and redirects the browser to the configured default logout success URL.</p>
+     *
+     * @param ui the Vaadin UI instance used to redirect the browser
+     */
     public void logout(final @NotNull UI ui) {
         logout(ui, SecurityConfig.LOGOUT_SUCCESS_URL);
     }
 
+    /**
+     * <p>Logs out the current user and redirects the browser to the specified location.</p>
+     *
+     * <p>If no authenticated user is present, the method logs a warning and still performs the redirect.</p>
+     *
+     * @param ui the Vaadin UI instance used to redirect the browser
+     * @param location the URL to redirect to after logout
+     */
     public void logout(final @NotNull UI ui,
                        final @NotNull String location) {
         final var user = getLoggedInUser().orElse(null);

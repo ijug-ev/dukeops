@@ -15,25 +15,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.infra.ui.vaadin.init;
+package eu.ijug.dukeops.infra.config;
 
-import com.vaadin.flow.component.UI;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.time.Clock;
 
 /**
- * <p>Functional interface for performing initialization logic on a newly created Vaadin {@link UI} instance.</p>
+ * <p>Spring configuration that provides a {@link Clock} bean for the application.</p>
  *
- * <p>Implementations are invoked during UI creation to apply cross-cutting UI-related configuration such as locale
- * detection, link configuration, or other UI-scoped setup tasks.</p>
+ * <p>The clock is used as a central time source and can be replaced or mocked in tests to ensure
+ * deterministic and reproducible time-based behavior.</p>
  */
-@FunctionalInterface
-public interface UIInitializer {
+@Configuration
+public class TimeConfig {
 
     /**
-     * <p>Applies initialization logic to the given Vaadin {@link UI} instance.</p>
+     * <p>Creates the default {@link Clock} instance for the application context.</p>
      *
-     * @param ui the Vaadin UI instance to initialize
+     * <p>The returned clock uses the system default time zone and should be injected wherever
+     * the current time is required.</p>
+     *
+     * @return the system default {@link Clock}
      */
-    void initialize(@NotNull UI ui);
+    @Bean
+    Clock clock() {
+        return Clock.systemDefaultZone();
+    }
 
 }

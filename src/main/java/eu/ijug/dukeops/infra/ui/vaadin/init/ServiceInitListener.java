@@ -24,16 +24,35 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * <p>Registers all {@link UIInitializer} implementations to be executed when a new Vaadin
+ * {@link com.vaadin.flow.component.UI} is created.</p>
+ *
+ * <p>This listener hooks into the Vaadin service lifecycle and ensures that UI-related initialization logic is applied
+ * consistently for every UI instance.</p>
+ */
 @Component
-public final class ServiceInitListener implements VaadinServiceInitListener {
+public class ServiceInitListener implements VaadinServiceInitListener {
 
 
     private final @NotNull List<@NotNull UIInitializer> initializers;
 
+    /**
+     * <p>Creates a new service init listener with the given list of UI initializers.</p>
+     *
+     * <p>The provided list is defensively copied to prevent external modification.</p>
+     *
+     * @param initializers the UI initializers to be executed for each new UI
+     */
     public ServiceInitListener(final @NotNull List<@NotNull UIInitializer> initializers) {
         this.initializers = List.copyOf(initializers);
     }
 
+    /**
+     * <p>Registers a UI initialization listener that applies all configured {@link UIInitializer} instances.</p>
+     *
+     * @param event the Vaadin service initialization event
+     */
     @Override
     public void serviceInit(final @NotNull ServiceInitEvent event) {
         event.getSource().addUIInitListener(initEvent -> {
