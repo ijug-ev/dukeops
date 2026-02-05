@@ -125,10 +125,10 @@ final class ClubDeskImportViewKT extends KaribuTest {
         assertThat(dialog.isOpened()).isTrue();
 
         final var dialogHeader = ConfirmDialogKt.getHeader(dialog);
-        assertThat(dialogHeader).contains("Import abgeschlossen");
+        assertThat(dialogHeader).contains("Import Completed");
 
         final var dialogText = ConfirmDialogKt.getText(dialog);
-        assertThat(dialogText).contains("Es wurden 2 Datensätze importiert.");
+        assertThat(dialogText).contains("2 records have been imported.");
 
         // Confirm dialog
         ConfirmDialogKt._fireConfirm(dialog);

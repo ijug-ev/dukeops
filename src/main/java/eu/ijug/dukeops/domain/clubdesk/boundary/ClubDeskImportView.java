@@ -172,8 +172,8 @@ public final class ClubDeskImportView extends AbstractView {
             final var success = clubDeskService.saveImportRecords(importRecords);
 
             final var dialog = new ConfirmDialog();
-            dialog.setHeader("Import abgeschlossen");
-            dialog.setText("Es wurden %d Datensätze importiert.".formatted(success));
+            dialog.setHeader(getTranslation("domain.clubdesk.boundary.ClubDeskImportView.successDialog.title"));
+            dialog.setText(getTranslation("domain.clubdesk.boundary.ClubDeskImportView.successDialog.text", success));
 
             dialog.setCloseOnEsc(false);
             dialog.setCancelable(false);
