@@ -174,7 +174,7 @@ public final class ClubDeskImportView extends AbstractView {
             dialog.setCloseOnEsc(false);
             dialog.setCancelable(false);
 
-            dialog.setConfirmText("OK");
+            dialog.setConfirmText(getTranslation("domain.clubdesk.boundary.ClubDeskImportView.successDialog.button"));
             dialog.addConfirmListener(_ -> {
                 dialog.close();
                 navigator.navigate(getUI().orElseThrow(), DashboardView.class);
