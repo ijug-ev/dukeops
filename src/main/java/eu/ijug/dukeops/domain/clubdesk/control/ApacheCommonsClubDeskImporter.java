@@ -22,14 +22,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -43,9 +39,6 @@ import java.util.Locale;
  */
 @Component
 public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
-
-    private static final @NotNull DateTimeFormatter DATE_DD_MM_YYYY =
-            DateTimeFormatter.ofPattern("dd.MM.uuuu", Locale.GERMAN);
 
     /**
      * <p>Parses the provided CSV input and converts all valid rows into immutable {@link ImportRecord} instances.</p>

@@ -65,6 +65,7 @@ public final class ClubDeskImportView extends AbstractView {
 
     public ClubDeskImportView(final @NotNull ClubDeskService clubDeskService,
                               final @NotNull Navigator navigator) {
+        super();
         this.clubDeskService = clubDeskService;
         this.navigator = navigator;
         addClassName("clubdesk-import-view");
