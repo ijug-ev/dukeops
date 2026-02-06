@@ -33,8 +33,8 @@ CREATE TABLE clubdesk (
 
     email VARCHAR(255) NOT NULL,
     email_alternative VARCHAR(255) DEFAULT '',
-    mastodon VARCHAR(255) DEFAULT '',
     matrix VARCHAR(255) DEFAULT '',
+    mastodon VARCHAR(255) DEFAULT '',
     linkedin VARCHAR(255) DEFAULT '',
 
     sepa_enabled BOOLEAN NOT NULL DEFAULT FALSE,
