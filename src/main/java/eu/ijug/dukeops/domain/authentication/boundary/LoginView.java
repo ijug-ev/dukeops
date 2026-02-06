@@ -17,6 +17,7 @@
  */
 package eu.ijug.dukeops.domain.authentication.boundary;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H3;
@@ -37,34 +38,28 @@ import org.jetbrains.annotations.NotNull;
 @Route(value = SecurityConfig.LOGIN_URL, layout = WebsiteLayout.class)
 public final class LoginView extends AbstractView {
 
+    private final @NotNull ConfirmationService confirmationService;
+    private final @NotNull EmailField emailField;
+    private final @NotNull Button submitButton;
+
     public LoginView(final @NotNull ConfirmationService confirmationService) {
         super();
+        this.confirmationService = confirmationService;
+
         setId("login-view");
         add(new H3(getTranslation("web.view.LoginView.login.title")));
 
-        final var emailField = new EmailField();
+        emailField = new EmailField();
         emailField.setPlaceholder(getTranslation("web.view.LoginView.login.email.placeholder"));
         emailField.setRequired(true);
         emailField.setValueChangeMode(ValueChangeMode.EAGER);
         emailField.setClearButtonVisible(true);
+        emailField.addKeyPressListener(Key.ENTER, event -> handleLogin());
         add(emailField);
 
-        final var submitButton = new Button(getTranslation("web.view.LoginView.login.button"));
+        submitButton = new Button(getTranslation("web.view.LoginView.login.button"));
         submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        submitButton.addClickListener(_ -> {
-            emailField.setEnabled(false);
-            submitButton.setEnabled(false);
-
-            final var locale = getLocale();
-            final var email = emailField.getValue().trim();
-            final var timeout = confirmationService.getConfirmationTimeoutText(locale);
-
-            confirmationService.sendConfirmationMail(locale, email);
-
-            removeAll();
-            add(new H3(getTranslation("web.view.LoginView.confirm.title")));
-            add(new Markdown(getTranslation("web.view.LoginView.confirm.description", email, timeout)));
-        });
+        submitButton.addClickListener(event -> handleLogin());
         add(submitButton);
 
         final var binder = new Binder<DummyBean>();
@@ -77,6 +72,21 @@ public final class LoginView extends AbstractView {
         binder.validate();
 
         emailField.focus();
+    }
+
+    private void handleLogin() {
+        emailField.setEnabled(false);
+        submitButton.setEnabled(false);
+
+        final var locale = getLocale();
+        final var email = emailField.getValue().trim();
+        final var timeout = confirmationService.getConfirmationTimeoutText(locale);
+
+        confirmationService.sendConfirmationMail(locale, email);
+
+        removeAll();
+        add(new H3(getTranslation("web.view.LoginView.confirm.title")));
+        add(new Markdown(getTranslation("web.view.LoginView.confirm.description", email, timeout)));
     }
 
     @Override
