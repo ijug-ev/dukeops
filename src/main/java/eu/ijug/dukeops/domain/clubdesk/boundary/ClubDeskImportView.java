@@ -113,10 +113,6 @@ public final class ClubDeskImportView extends AbstractView {
         grid.addColumn(ImportRecord::mastodon).setHeader(getFieldName("mastodon"));
         grid.addColumn(ImportRecord::linkedin).setHeader(getFieldName("linkedin"));
         grid.addColumn(ImportRecord::sepaEnabled).setHeader(getFieldName("sepaEnabled"));
-        grid.addColumn(ImportRecord::sepaMandateReference).setHeader(getFieldName("sepaMandateReference"));
-        grid.addColumn(ImportRecord::sepaMandateDate).setHeader(getFieldName("sepaMandateDate"));
-        grid.addColumn(ImportRecord::sepaType).setHeader(getFieldName("sepaType"));
-        grid.addColumn(ImportRecord::sepaLastDebitDate).setHeader(getFieldName("sepaLastDebitDate"));
         grid.addColumn(ImportRecord::sepaAccountHolder).setHeader(getFieldName("sepaAccountHolder"));
         grid.addColumn(ImportRecord::sepaIban).setHeader(getFieldName("sepaIban"));
         grid.addColumn(ImportRecord::sepaBic).setHeader(getFieldName("sepaBic"));

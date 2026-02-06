@@ -121,15 +121,11 @@ final class JooqClubDeskRepositoryIT extends IntegrationTest {
                 "", // linkedin
 
                 false, // sepaEnabled
-                "",    // mandateReference
-                null,  // mandateDate
-                "",    // sepaType
-                null,  // lastDebitDate
-                "",    // accountHolder
-                "",    // iban
-                "",    // bic
+                null,  // accountHolder
+                null,  // iban
+                null,  // bic
 
-                "",    // jug
+                null,  // jug
                 true   // newsletter default
         );
     }

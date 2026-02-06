@@ -68,13 +68,9 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 false,
-                "",
                 null,
-                "",
                 null,
-                "",
-                "",
-                "",
+                null,
                 "JUG CH"
         );
 
@@ -121,13 +117,9 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 false,
-                "",
                 null,
-                "",
                 null,
-                "",
-                "",
-                "",
+                null,
                 "JUG CH"
         );
 
@@ -160,13 +152,9 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 false,
-                "",
                 null,
-                "",
                 null,
-                "",
-                "",
-                "",
+                null,
                 "JUG CH"
         );
 

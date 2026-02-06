@@ -20,7 +20,6 @@ package eu.ijug.dukeops.domain.clubdesk.entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -45,10 +44,6 @@ public record ClubDeskDto(
         @Nullable String linkedin,
 
         boolean sepaEnabled,
-        @Nullable String sepaMandateReference,
-        @Nullable LocalDate sepaMandateDate,
-        @Nullable String sepaType,
-        @Nullable LocalDate sepaLastDebitDate,
         @Nullable String sepaAccountHolder,
         @Nullable String sepaIban,
         @Nullable String sepaBic,

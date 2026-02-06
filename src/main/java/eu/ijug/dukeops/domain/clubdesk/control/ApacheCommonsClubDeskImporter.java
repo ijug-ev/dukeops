@@ -103,10 +103,6 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
         final var linkedin = optional(row, "LinkedIn");
 
         final var sepaEnabled = parseBoolean(optional(row, "SEPA-Lastschrift erlauben"));
-        final var sepaMandateReference = optional(row, "Mandatsreferenz");
-        final var sepaMandateDate = parseDate(optional(row, "Mandat Unterschriftsdatum"));
-        final var sepaType = optional(row, "Lastschriftart");
-        final var sepaLastDebitDate = parseDate(optional(row, "Letzter Lastschrifteinzug"));
         final var sepaAccountHolder = optional(row, "Kontoinhaber");
         final var sepaIban = optional(row, "IBAN");
         final var sepaBic = optional(row, "BIC");
@@ -127,10 +123,6 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
                 mastodon,
                 linkedin,
                 sepaEnabled,
-                sepaMandateReference,
-                sepaMandateDate,
-                sepaType,
-                sepaLastDebitDate,
                 sepaAccountHolder,
                 sepaIban,
                 sepaBic,
@@ -159,17 +151,6 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
     private static boolean parseBoolean(final @NotNull String value) {
         final var v = value.trim().toLowerCase(Locale.ROOT);
         return v.equals("ja") || v.equals("true") || v.equals("1") || v.equals("yes");
-    }
-
-    private static @Nullable LocalDate parseDate(final @NotNull String value) {
-        if (value.isBlank()) {
-            return null;
-        }
-        try {
-            return LocalDate.parse(value.trim(), DATE_DD_MM_YYYY);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date '" + value + "' (expected dd.MM.yyyy)", e);
-        }
     }
 
 }

@@ -113,31 +113,6 @@ final class ApacheCommonsClubDeskImporterTest {
     }
 
     @Test
-    void parse_shouldParseValidMandateDate() throws IOException {
-        final String csv = """
-            "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
-            "john.doe@example.com";"John";"Doe";"";"";"";"";"";"";"";"";"";"Nein";"";"02.02.2026";"";"";"";"";"";""
-            """;
-
-        final var record = importer.parse(Reader.of(csv)).getFirst();
-
-        assertThat(record.sepaMandateDate()).isEqualTo(java.time.LocalDate.of(2026, 2, 2));
-    }
-
-    @Test
-    void parse_shouldFailOnInvalidMandateDate() {
-        final String csv = """
-            "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
-            "john.doe@example.com";"John";"Doe";"";"";"";"";"";"";"";"";"";"Nein";"";"32.13.2026";"";"";"";"";"";""
-            """;
-
-        assertThatThrownBy(() -> importer.parse(Reader.of(csv)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Invalid date")
-                .hasMessageContaining("dd.MM.yyyy");
-    }
-
-    @Test
     void parse_shouldForwardIOExceptionOfReader() {
         @SuppressWarnings("resource")
         final Reader throwingReader = new Reader() {

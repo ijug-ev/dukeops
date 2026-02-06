@@ -20,8 +20,6 @@ package eu.ijug.dukeops.domain.clubdesk.entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDate;
-
 public record ImportRecord(
         @Nullable String firstname,
         @Nullable String lastname,
@@ -38,10 +36,6 @@ public record ImportRecord(
         @Nullable String linkedin,
 
         boolean sepaEnabled,
-        @Nullable String sepaMandateReference,
-        @Nullable LocalDate sepaMandateDate,
-        @Nullable String sepaType,
-        @Nullable LocalDate sepaLastDebitDate,
         @Nullable String sepaAccountHolder,
         @Nullable String sepaIban,
         @Nullable String sepaBic,

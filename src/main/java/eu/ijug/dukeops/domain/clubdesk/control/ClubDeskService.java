@@ -178,10 +178,6 @@ public class ClubDeskService {
                 importRecord.linkedin(),
 
                 importRecord.sepaEnabled(),
-                importRecord.sepaMandateReference(),
-                importRecord.sepaMandateDate(),
-                importRecord.sepaType(),
-                importRecord.sepaLastDebitDate(),
                 importRecord.sepaAccountHolder(),
                 importRecord.sepaIban(),
                 importRecord.sepaBic(),

@@ -75,10 +75,7 @@ final class ClubDeskServiceTest {
                 "", "", "", "", "",
                 "john.doe@example.com",
                 "", "", "", "",
-                false,
-                "", null,
-                "", null,
-                "", "", "",
+                false, null, null, null,
                 "JUG X"
         );
 
@@ -129,10 +126,7 @@ final class ClubDeskServiceTest {
                 "", "", "", "", "",
                 "john.doe@example.com",
                 "", "", "", "",
-                false,
-                "", null,
-                "", null,
-                "", "", "",
+                false, null, null, null,
                 ""
         );
 
@@ -177,10 +171,7 @@ final class ClubDeskServiceTest {
                 "", "", "", "", "",
                 "john.doe@example.com",
                 "", "", "", "",
-                false,
-                "", null,
-                "", null,
-                "", "", "",
+                false, null, null, null,
                 ""
         );
 

@@ -38,10 +38,6 @@ CREATE TABLE clubdesk (
     linkedin VARCHAR(255) DEFAULT '',
 
     sepa_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    sepa_mandate_reference VARCHAR(255) DEFAULT NULL,
-    sepa_mandate_date TIMESTAMP DEFAULT NULL,
-    sepa_type VARCHAR(50) DEFAULT NULL,
-    sepa_last_debit_date TIMESTAMP DEFAULT NULL,
     sepa_account_holder VARCHAR(255) DEFAULT NULL,
     sepa_iban VARCHAR(34) DEFAULT NULL,
     sepa_bic VARCHAR(11) DEFAULT NULL,
