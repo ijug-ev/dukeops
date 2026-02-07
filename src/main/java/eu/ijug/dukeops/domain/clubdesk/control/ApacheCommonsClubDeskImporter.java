@@ -17,6 +17,7 @@
  */
 package eu.ijug.dukeops.domain.clubdesk.control;
 
+import eu.ijug.dukeops.domain.clubdesk.entity.Country;
 import eu.ijug.dukeops.domain.clubdesk.entity.ImportRecord;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -88,7 +89,7 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
         final var addressAddition = optional(row, "Adress-Zusatz");
         final var zip = optional(row, "PLZ");
         final var city = optional(row, "Ort");
-        final var country = optional(row, "Land");
+        final var country = Country.fromName(optional(row, "Land"), Locale.GERMAN); // ClubDesk uses German country names
 
         final var emailAlt = optional(row, "E-Mail Alternativ");
         final var matrix = optional(row, "Matrix");

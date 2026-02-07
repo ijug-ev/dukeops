@@ -17,8 +17,12 @@
  */
 package eu.ijug.dukeops.domain.clubdesk.control;
 
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.domain.clubdesk.entity.ImportRecord;
 import eu.ijug.dukeops.domain.user.control.UserService;
+import eu.ijug.dukeops.infra.communication.mail.MailService;
+import eu.ijug.dukeops.infra.ui.vaadin.i18n.TranslationProvider;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -48,15 +52,20 @@ final class ClubDeskServiceImportTest {
         final var clubDeskRepository = mock(ClubDeskRepository.class);
         final var clubDeskImporter = mock(ClubDeskImporter.class);
         final var userService = mock(UserService.class);
+        final var authenticationService = mock(AuthenticationService.class);
+        final var mailService = mock(MailService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+        final var dsl = mock(DSLContext.class);
 
-        final var service = new ClubDeskService(clubDeskRepository, clubDeskImporter, userService);
+        final var service = new ClubDeskService(clubDeskRepository, clubDeskImporter, userService,
+                authenticationService, mailService, translationProvider, dsl);
 
         final var csv = tempDir.resolve("clubdesk.csv");
         Files.writeString(csv, "dummy", StandardCharsets.ISO_8859_1);
 
         final var expected = new ImportRecord(
                 "John", "Doe",
-                "", "", "", "", "",
+                "", "", "", "", null,
                 "john.doe@example.com",
                 "", "", "", "",
                 false, null, null, null,
@@ -76,8 +85,13 @@ final class ClubDeskServiceImportTest {
         final var clubDeskRepository = mock(ClubDeskRepository.class);
         final var clubDeskImporter = mock(ClubDeskImporter.class);
         final var userService = mock(UserService.class);
+        final var authenticationService = mock(AuthenticationService.class);
+        final var mailService = mock(MailService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+        final var dsl = mock(DSLContext.class);
 
-        final var service = new ClubDeskService(clubDeskRepository, clubDeskImporter, userService);
+        final var service = new ClubDeskService(clubDeskRepository, clubDeskImporter, userService,
+                authenticationService, mailService, translationProvider, dsl);
 
         final var directoryAsFile = tempDir.toFile(); // is a directory, not a file
 

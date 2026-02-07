@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static eu.ijug.dukeops.infra.persistence.jooq.generated.Tables.USER;
 
@@ -79,6 +80,20 @@ public class UserService extends StorageService {
     public @NotNull List<@NotNull UserDto> getAllUsers() {
         return dsl.selectFrom(USER)
                 .fetchInto(UserDto.class);
+    }
+
+    /**
+     * <p>Retrieves a user by the given ID.</p>
+     *
+     * <p>If no user with the specified ID, an empty {@link Optional} is returned.</p>
+     *
+     * @param id the ID of the user to look up
+     * @return an optional containing the user if found, or empty otherwise
+     */
+    public @NotNull Optional<UserDto> getUserById(final @NotNull UUID id) {
+        return dsl.selectFrom(USER)
+                .where(USER.ID.eq(id))
+                .fetchOptionalInto(UserDto.class);
     }
 
     /**

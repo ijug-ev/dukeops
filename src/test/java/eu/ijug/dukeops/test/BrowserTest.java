@@ -47,9 +47,9 @@ public abstract class BrowserTest extends IntegrationTest {
 
     protected static final @NotNull String PAGE_NAME_SELECTOR = "h1:has-text('DukeOps')";
 
-    private static final @NotNull String LOGIN_SELECTOR = "a[href='login']";
-    private static final @NotNull String LOGOUT_SELECTOR = "a[href='logout']";
-    private static final @NotNull String CONFIRMATION_SUCCESSFUL_SELECTOR = "h3:has-text('Confirmation Successful')";
+    protected static final @NotNull String LOGIN_SELECTOR = "a[href='login']";
+    protected static final @NotNull String LOGOUT_SELECTOR = "a[href='logout']";
+    protected static final @NotNull String CONFIRMATION_SUCCESSFUL_SELECTOR = "h3:has-text('Confirmation Successful')";
 
     private static final @NotNull Path SCREENSHOT_DIR = Path.of("target/playwright-screenshots");
     private static final @NotNull DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmssSSS");

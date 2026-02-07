@@ -15,30 +15,38 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.domain.clubdesk.entity;
+package eu.ijug.dukeops.infra.persistence.jooq;
 
+import eu.ijug.dukeops.domain.clubdesk.entity.Country;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.Converter;
 
-public record ImportRecord(
-        @NotNull String firstname,
-        @NotNull String lastname,
-        @NotNull String address,
-        @NotNull String addressAddition,
-        @NotNull String zipCode,
-        @NotNull String city,
-        @Nullable Country country,
+public final class CountryConverter implements Converter<String, Country> {
 
-        @NotNull String email,
-        @NotNull String emailAlternative,
-        @NotNull String matrix,
-        @NotNull String mastodon,
-        @NotNull String linkedin,
+    @Override
+    public @Nullable Country from(final @Nullable String databaseObject) {
+        if (databaseObject == null || databaseObject.isBlank()) {
+            return null;
+        }
+        return Country.ofIso2(databaseObject);
+    }
 
-        boolean sepaEnabled,
-        @NotNull String sepaAccountHolder,
-        @NotNull String sepaIban,
-        @NotNull String sepaBic,
+    @Override
+    public @NotNull String to(final @Nullable Country userObject) {
+        if (userObject == null) {
+            return "";
+        }
+        return userObject.iso2();
+    }
 
-        @NotNull String jug
-) { }
+    @Override
+    public @NotNull Class<String> fromType() {
+        return String.class;
+    }
+
+    @Override
+    public @NotNull Class<Country> toType() {
+        return Country.class;
+    }
+}

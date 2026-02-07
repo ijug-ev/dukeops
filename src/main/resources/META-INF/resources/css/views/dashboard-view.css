@@ -1,4 +1,4 @@
-/*
+/**
  * DukeOps - iJUG Self-Service Portal
  * Copyright (C) Marcus Fihlon and the individual contributors to DukeOps.
  *
@@ -15,30 +15,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.domain.clubdesk.entity;
+.dashboard-view vaadin-card {
+    width: 250px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+.dashboard-view vaadin-card:hover {
+    box-shadow: var(--aura-shadow-s);
+    transform: scale(1.03);
+}
 
-public record ImportRecord(
-        @NotNull String firstname,
-        @NotNull String lastname,
-        @NotNull String address,
-        @NotNull String addressAddition,
-        @NotNull String zipCode,
-        @NotNull String city,
-        @Nullable Country country,
-
-        @NotNull String email,
-        @NotNull String emailAlternative,
-        @NotNull String matrix,
-        @NotNull String mastodon,
-        @NotNull String linkedin,
-
-        boolean sepaEnabled,
-        @NotNull String sepaAccountHolder,
-        @NotNull String sepaIban,
-        @NotNull String sepaBic,
-
-        @NotNull String jug
-) { }
+.dashboard-view vaadin-card.clickable {
+    cursor: pointer;
+}

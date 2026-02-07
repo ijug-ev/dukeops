@@ -15,30 +15,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.domain.clubdesk.entity;
+package eu.ijug.dukeops.domain.dashboard.boundary;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import eu.ijug.dukeops.infra.ui.vaadin.control.LinkUtil;
+import eu.ijug.dukeops.test.BrowserTest;
+import org.junit.jupiter.api.Test;
 
-public record ImportRecord(
-        @NotNull String firstname,
-        @NotNull String lastname,
-        @NotNull String address,
-        @NotNull String addressAddition,
-        @NotNull String zipCode,
-        @NotNull String city,
-        @Nullable Country country,
+class DashboardViewBT extends BrowserTest {
 
-        @NotNull String email,
-        @NotNull String emailAlternative,
-        @NotNull String matrix,
-        @NotNull String mastodon,
-        @NotNull String linkedin,
+    @Test
+    void testDashboardNavigation() {
+        login(TEST_USER);
 
-        boolean sepaEnabled,
-        @NotNull String sepaAccountHolder,
-        @NotNull String sepaIban,
-        @NotNull String sepaBic,
+        final var page = getPage();
+        page.navigate(LinkUtil.getBaseUrl());
+        page.waitForSelector(PAGE_NAME_SELECTOR);
+        captureScreenshot("before-navigation");
 
-        @NotNull String jug
-) { }
+        page.locator("vaadin-card.clickable").first().click();
+        page.waitForURL("**/clubdesk/edit");
+        captureScreenshot("after-navigation");
+    }
+
+}

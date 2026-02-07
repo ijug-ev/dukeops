@@ -27,6 +27,12 @@
                     <userType>java.util.UUID</userType>
                     <converter>eu.ijug.dukeops.infra.persistence.jooq.UUIDConverter</converter>
                 </forcedType>
+                <forcedType>
+                    <includeTypes>CHAR</includeTypes>
+                    <includeExpression>(^country$)</includeExpression>
+                    <userType>eu.ijug.dukeops.domain.clubdesk.entity.Country</userType>
+                    <converter>eu.ijug.dukeops.infra.persistence.jooq.CountryConverter</converter>
+                </forcedType>
             </forcedTypes>
 
             <properties>

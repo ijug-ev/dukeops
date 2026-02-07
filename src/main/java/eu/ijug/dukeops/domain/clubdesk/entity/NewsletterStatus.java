@@ -17,28 +17,9 @@
  */
 package eu.ijug.dukeops.domain.clubdesk.entity;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+public enum NewsletterStatus {
 
-public record ImportRecord(
-        @NotNull String firstname,
-        @NotNull String lastname,
-        @NotNull String address,
-        @NotNull String addressAddition,
-        @NotNull String zipCode,
-        @NotNull String city,
-        @Nullable Country country,
+    ON,
+    OFF
 
-        @NotNull String email,
-        @NotNull String emailAlternative,
-        @NotNull String matrix,
-        @NotNull String mastodon,
-        @NotNull String linkedin,
-
-        boolean sepaEnabled,
-        @NotNull String sepaAccountHolder,
-        @NotNull String sepaIban,
-        @NotNull String sepaBic,
-
-        @NotNull String jug
-) { }
+}

@@ -108,11 +108,11 @@ final class JooqClubDeskRepositoryIT extends IntegrationTest {
 
                 firstname,
                 lastname,
-                "", // address
-                "", // addressAddition
-                "", // zip
-                "", // city
-                "", // country
+                "",   // address
+                "",   // addressAddition
+                "",   // zip
+                "",   // city
+                null, // country
 
                 email,
                 "", // emailAlternative
@@ -121,12 +121,12 @@ final class JooqClubDeskRepositoryIT extends IntegrationTest {
                 "", // linkedin
 
                 false, // sepaEnabled
-                null,  // accountHolder
-                null,  // iban
-                null,  // bic
+                "",    // accountHolder
+                "",    // iban
+                "",    // bic
 
-                null,  // jug
-                true   // newsletter default
+                "",  // jug
+                true // newsletter default
         );
     }
 

@@ -17,8 +17,12 @@
  */
 package eu.ijug.dukeops.domain.dashboard.boundary;
 
+import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.router.Route;
+import eu.ijug.dukeops.domain.clubdesk.boundary.ClubDeskEditView;
+import eu.ijug.dukeops.infra.ui.vaadin.control.Navigator;
 import eu.ijug.dukeops.infra.ui.vaadin.layout.AbstractView;
 import eu.ijug.dukeops.infra.ui.vaadin.layout.WebsiteLayout;
 import jakarta.annotation.security.PermitAll;
@@ -28,8 +32,36 @@ import org.jetbrains.annotations.NotNull;
 @Route(value = "", layout = WebsiteLayout.class)
 public final class DashboardView extends AbstractView {
 
-    public DashboardView() {
+    @NotNull
+    private final Navigator navigator;
+
+    public DashboardView(final @NotNull Navigator navigator) {
+        super();
+        this.navigator = navigator;
+        addClassName("dashboard-view");
         add(new H3("Dashboard"));
+        add(createCard(
+                getTranslation("domain.clubdesk.boundary.ClubDeskEditView.title"),
+                getTranslation("domain.clubdesk.boundary.ClubDeskEditView.description"),
+                "images/clubdesk.webp",
+                ClubDeskEditView.class));
+    }
+
+    private @NotNull Card createCard(final @NotNull String title,
+                                     final @NotNull String description,
+                                     final @NotNull String imageUrl,
+                                     final @NotNull Class<? extends AbstractView> viewClass) {
+        final var card = new Card();
+        card.setTitle(title);
+        card.add(description);
+        card.setMedia(new Image(imageUrl, title));
+
+        card.addClassName("clickable");
+        card.getElement()
+                .addEventListener("click", (_ -> navigator.navigate(getUI().orElseThrow(), viewClass)))
+                .setFilter("event.button === 0");
+
+        return card;
     }
 
     @Override

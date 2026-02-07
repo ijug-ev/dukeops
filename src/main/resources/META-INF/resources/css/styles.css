@@ -21,5 +21,7 @@
 @import "components/page-footer.css";
 @import "components/navigation-bar.css";
 
+@import "views/clubdesk-edit-view.css";
 @import "views/clubdesk-import-view.css";
+@import "views/dashboard-view.css";
 @import "views/login-view.css";

@@ -17,11 +17,15 @@
  */
 package eu.ijug.dukeops.domain.clubdesk.control;
 
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.domain.clubdesk.entity.ClubDeskDto;
 import eu.ijug.dukeops.domain.clubdesk.entity.ImportRecord;
 import eu.ijug.dukeops.domain.user.control.UserService;
 import eu.ijug.dukeops.domain.user.entity.UserDto;
 import eu.ijug.dukeops.domain.user.entity.UserRole;
+import eu.ijug.dukeops.infra.communication.mail.MailService;
+import eu.ijug.dukeops.infra.ui.vaadin.i18n.TranslationProvider;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,6 +39,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.mock;
@@ -55,7 +60,12 @@ final class ClubDeskServiceTest {
         userService = mock(UserService.class);
         clubDeskRepository = mock(ClubDeskRepository.class);
         final var clubDeskImporter = mock(ClubDeskImporter.class);
-        service = new ClubDeskService(clubDeskRepository, clubDeskImporter, userService);
+        final var authenticationService = mock(AuthenticationService.class);
+        final var mailService = mock(MailService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+        final var dsl = mock(DSLContext.class);
+        service = new ClubDeskService(clubDeskRepository, clubDeskImporter, userService,
+                authenticationService, mailService, translationProvider, dsl);
     }
 
     @Test
@@ -72,10 +82,10 @@ final class ClubDeskServiceTest {
         final ImportRecord record = new ImportRecord(
                 "John",
                 "Doe",
-                "", "", "", "", "",
+                "", "", "", "", null,
                 "john.doe@example.com",
                 "", "", "", "",
-                false, null, null, null,
+                false, "", "", "",
                 "JUG X"
         );
 
@@ -123,10 +133,10 @@ final class ClubDeskServiceTest {
         final ImportRecord record = new ImportRecord(
                 "John",
                 "Doe",
-                "", "", "", "", "",
+                "", "", "", "", null,
                 "john.doe@example.com",
                 "", "", "", "",
-                false, null, null, null,
+                false, "", "", "",
                 ""
         );
 
@@ -168,10 +178,10 @@ final class ClubDeskServiceTest {
         final ImportRecord record = new ImportRecord(
                 "John",
                 "Doe",
-                "", "", "", "", "",
+                "", "", "", "", null,
                 "john.doe@example.com",
                 "", "", "", "",
-                false, null, null, null,
+                false, "", "", "",
                 ""
         );
 
@@ -202,8 +212,13 @@ final class ClubDeskServiceTest {
         final var importer = mock(ClubDeskImporter.class);
         final var repository = mock(ClubDeskRepository.class);
         final var userService = mock(UserService.class);
+        final var authenticationService = mock(AuthenticationService.class);
+        final var mailService = mock(MailService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+        final var dsl = mock(DSLContext.class);
 
-        final var service = new ClubDeskService(repository, importer, userService);
+        final var service = new ClubDeskService(repository, importer, userService,
+                authenticationService, mailService, translationProvider, dsl);
 
         final var file = File.createTempFile("clubdesk", ".csv");
         file.deleteOnExit();
@@ -216,6 +231,115 @@ final class ClubDeskServiceTest {
 
         //noinspection ResultOfMethodCallIgnored
         file.delete();
+    }
+
+    @Test
+    void getClubDeskForCurrentUser_whenNotLoggedIn_shouldReturnEmpty() {
+        final var importer = mock(ClubDeskImporter.class);
+        final var repository = mock(ClubDeskRepository.class);
+        final var userService = mock(UserService.class);
+        final var authenticationService = mock(AuthenticationService.class);
+        final var mailService = mock(MailService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+        final var dsl = mock(DSLContext.class);
+
+        when(authenticationService.getLoggedInUser()).thenReturn(Optional.empty());
+
+        final var service = new ClubDeskService(repository, importer, userService,
+                authenticationService, mailService, translationProvider, dsl);
+
+        final var result = service.getClubDeskForCurrentUser();
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getClubDeskForCurrentUser_whenLoggedInUserHasNoId_shouldReturnEmpty() {
+        final var importer = mock(ClubDeskImporter.class);
+        final var repository = mock(ClubDeskRepository.class);
+        final var userService = mock(UserService.class);
+        final var authenticationService = mock(AuthenticationService.class);
+        final var mailService = mock(MailService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+        final var dsl = mock(DSLContext.class);
+
+        final var userWithNoId = new UserDto(
+                null, LocalDateTime.now(), LocalDateTime.now(),
+                "John Doe", "john.doe@example.com", UserRole.USER);
+        when(authenticationService.getLoggedInUser()).thenReturn(Optional.of(userWithNoId));
+
+        final var service = new ClubDeskService(repository, importer, userService,
+                authenticationService, mailService, translationProvider, dsl);
+
+        final var result = service.getClubDeskForCurrentUser();
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @SuppressWarnings("DuplicateExpressions")
+    void notifyOffice_skipWhenIdentical() {
+        final var importer = mock(ClubDeskImporter.class);
+        final var repository = mock(ClubDeskRepository.class);
+        final var userService = mock(UserService.class);
+        final var authenticationService = mock(AuthenticationService.class);
+        final var mailService = mock(MailService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+        final var dsl = mock(DSLContext.class);
+
+        final var service = new ClubDeskService(repository, importer, userService,
+                authenticationService, mailService, translationProvider, dsl);
+
+        final var id = UUID.randomUUID();
+        final var clubDeskOriginal = new ClubDeskDto(id, null, null,
+                "John", "Doe", "", "", "", "", null,
+                "john.doe@example.com", "", "", "", "",
+                false, "", "", "",
+                "", true);
+        final var clubDeskUpdated = new ClubDeskDto(id, null, null,
+                "John", "Doe", "", "", "", "", null,
+                "john.doe@example.com", "", "", "", "",
+                false, "", "", "",
+                "", true);
+
+        service.notifyOffice(clubDeskOriginal, clubDeskUpdated);
+
+        verifyNoInteractions(mailService);
+    }
+
+    @Test
+    void notifyOffice_sendMailWithDiff() {
+        final var importer = mock(ClubDeskImporter.class);
+        final var repository = mock(ClubDeskRepository.class);
+        final var userService = mock(UserService.class);
+        final var authenticationService = mock(AuthenticationService.class);
+        final var mailService = mock(MailService.class);
+        final var translationProvider = new TranslationProvider();
+        final var dsl = mock(DSLContext.class);
+
+        final var service = new ClubDeskService(repository, importer, userService,
+                authenticationService, mailService, translationProvider, dsl);
+
+        final var id = UUID.randomUUID();
+        final var clubDeskOriginal = new ClubDeskDto(id, null, null,
+                "John", "Doe", "", "", "", "", null,
+                "john.doe@example.com", "", "", "", "",
+                false, "", "", "",
+                "", true);
+        final var clubDeskUpdated = new ClubDeskDto(id, null, null,
+                "Jane", "Doe", "", "", "", "", null,
+                "jane.doe@example.com", "", "", "", "",
+                false, "", "", "",
+                "", false);
+
+        service.notifyOffice(clubDeskOriginal, clubDeskUpdated);
+
+        verify(mailService).sendMail(
+                eq("office@ijug.eu"),
+                eq("[DukeOps] Neue Stammdaten für Jane Doe"),
+                eq("""
+                        Vorname: John → Jane
+                        E-Mail: john.doe@example.com → jane.doe@example.com
+                        Vereinsinformationen: ja → nein
+                        """));
     }
 
 }

@@ -17,6 +17,7 @@
  */
 package eu.ijug.dukeops.domain.clubdesk.control;
 
+import eu.ijug.dukeops.domain.clubdesk.entity.Country;
 import eu.ijug.dukeops.domain.clubdesk.entity.ImportRecord;
 import eu.ijug.dukeops.domain.user.control.UserService;
 import eu.ijug.dukeops.test.IntegrationTest;
@@ -61,7 +62,7 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "6000",
                 "Lucerne",
-                "Switzerland",
+                Country.ofIso2("CH"),
                 "user@example.com",
                 "",
                 "",
@@ -110,7 +111,7 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "6000",
                 "Lucerne",
-                "Switzerland",
+                Country.ofIso2("CH"),
                 "user@example.com",
                 "",
                 "",
@@ -145,7 +146,7 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "6000",
                 "Lucerne",
-                "Switzerland",
+                Country.ofIso2("CH"),
                 "user@example.com",
                 "",
                 "",

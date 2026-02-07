@@ -17,13 +17,19 @@
  */
 package eu.ijug.dukeops.domain.clubdesk.control;
 
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.domain.clubdesk.entity.ClubDeskDto;
+import eu.ijug.dukeops.domain.clubdesk.entity.Country;
 import eu.ijug.dukeops.domain.clubdesk.entity.ImportRecord;
 import eu.ijug.dukeops.domain.user.control.FullNameBuilder;
 import eu.ijug.dukeops.domain.user.control.UserService;
 import eu.ijug.dukeops.domain.user.entity.UserDto;
 import eu.ijug.dukeops.domain.user.entity.UserRole;
+import eu.ijug.dukeops.infra.communication.mail.MailService;
+import eu.ijug.dukeops.infra.ui.vaadin.i18n.TranslationProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,7 +41,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+
+import static eu.ijug.dukeops.infra.persistence.jooq.generated.Tables.CLUBDESK;
 
 /**
  * <p>Spring-managed service that orchestrates the import of ClubDesk CSV data into the application.</p>
@@ -54,6 +65,10 @@ public class ClubDeskService {
     private final @NotNull ClubDeskRepository clubDeskRepository;
     private final @NotNull ClubDeskImporter clubDeskImporter;
     private final @NotNull UserService userService;
+    private final @NotNull AuthenticationService authenticationService;
+    private final @NotNull MailService mailService;
+    private final @NotNull TranslationProvider translationProvider;
+    private final @NotNull DSLContext dsl;
 
     /**
      * <p>Creates a new ClubDesk service using the required collaborators.</p>
@@ -61,14 +76,26 @@ public class ClubDeskService {
      * @param clubDeskRepository the repository used to persist ClubDesk records
      * @param clubDeskImporter the importer used to parse ClubDesk CSV files
      * @param userService the user service used to resolve or create users
+     * @param authenticationService the authentication service used to access the current user context
+     * @param mailService the mail service used to send notification emails after relevant data changes
+     * @param translationProvider the translation provider used to localize email content
+     * @param dsl the jOOQ DSL context used to execute database operations
      */
     public ClubDeskService(final @NotNull ClubDeskRepository clubDeskRepository,
                            final @NotNull ClubDeskImporter clubDeskImporter,
-                           final @NotNull UserService userService) {
+                           final @NotNull UserService userService,
+                           final @NotNull AuthenticationService authenticationService,
+                           final @NotNull MailService mailService,
+                           final @NotNull TranslationProvider translationProvider,
+                           final @NotNull DSLContext dsl) {
         super();
         this.clubDeskRepository = clubDeskRepository;
         this.clubDeskImporter = clubDeskImporter;
         this.userService = userService;
+        this.authenticationService = authenticationService;
+        this.mailService = mailService;
+        this.translationProvider = translationProvider;
+        this.dsl = dsl;
     }
 
 
@@ -185,6 +212,258 @@ public class ClubDeskService {
                 importRecord.jug(),
                 DEFAULT_NEWSLETTER_SETTING
         );
+    }
+
+    /**
+     * <p>Returns the {@link ClubDeskDto} associated with the currently authenticated user, if available.</p>
+     *
+     * <p>The method first resolves the currently logged-in user via the authentication subsystem and then
+     * attempts to load the corresponding ClubDesk record using the user's unique identifier. If no user
+     * is logged in, or if the logged-in user does not have a valid identifier, an empty {@link Optional}
+     * is returned.</p>
+     *
+     * <p>An error is logged if an authenticated user exists but has no ID, as this represents an invalid
+     * application state. A warning is logged if no user is currently authenticated.</p>
+     *
+     * @return an {@link Optional} containing the {@link ClubDeskDto} for the current user, or an empty
+     *         {@link Optional} if no matching data can be resolved
+     */
+    public Optional<ClubDeskDto> getClubDeskForCurrentUser() {
+        final var userData = authenticationService.getLoggedInUser();
+        if (userData.isPresent()) {
+            final var id = userData.orElse(null).id();
+            if (id == null) {
+                LOGGER.error("Logged in user has no ID, cannot fetch ClubDesk data. This is an invalid state!");
+                return Optional.empty();
+            }
+            return getById(id);
+        }
+        LOGGER.warn("No user is currently logged in, cannot fetch ClubDesk data.");
+        return Optional.empty();
+    }
+
+    /**
+     * <p>Fetches the {@link ClubDeskDto} for the given user ID from the database.</p>
+     *
+     * <p>If no record exists for the provided ID, an empty {@link Optional} is returned.</p>
+     *
+     * @param id the unique identifier of the user whose ClubDesk data should be retrieved
+     * @return an {@link Optional} containing the {@link ClubDeskDto} if found, otherwise an empty {@link Optional}
+     */
+    private @NotNull Optional<ClubDeskDto> getById(final @NotNull UUID id) {
+        final var clubDeskDto = dsl.selectFrom(CLUBDESK)
+                .where(CLUBDESK.ID.eq(id))
+                .fetchOptionalInto(ClubDeskDto.class);
+        LOGGER.debug("Fetched ClubDesk data for user ID {}: {}", id, clubDeskDto);
+        return clubDeskDto;
+    }
+
+    /**
+     * <p>Retrieves a list of all distinct Java User Group names stored in ClubDesk.</p>
+     *
+     * <p>Only non-null and non-empty group names are included, and the result is sorted alphabetically.</p>
+     *
+     * @return a list of distinct Java User Group names
+     */
+    public @NotNull List<String> getAllJavaUserGroups() {
+        return dsl.selectDistinct(CLUBDESK.JUG)
+                .from(CLUBDESK)
+                .where(CLUBDESK.JUG.isNotNull()
+                        .and(CLUBDESK.JUG.notEqual("")))
+                .orderBy(CLUBDESK.JUG.asc())
+                .fetchInto(String.class);
+    }
+
+    /**
+     * <p>Saves the given ClubDesk data by creating a new record or updating an existing one.</p>
+     *
+     * <p>The method delegates to the underlying repository, which performs an upsert operation.
+     * This means that an existing record is updated if it already exists, otherwise a new record
+     * is created.</p>
+     *
+     * @param clubDesk the ClubDesk data to be persisted; must not be {@code null}
+     * @return the persisted ClubDesk data as stored in the database; never {@code null}
+     */
+    public @NotNull ClubDeskDto save(final @NotNull ClubDeskDto clubDesk) {
+        final var savedClubDesk = clubDeskRepository.upsert(clubDesk);
+        final var user = userService.getUserById(savedClubDesk.id()).orElseThrow();
+        if (!user.email().equals(savedClubDesk.email())) {
+            final var updatedUser = userService.storeUser(new UserDto(user.id(), user.created(), user.updated(),
+                    user.name(), savedClubDesk.email(), user.role()));
+            userService.storeUser(updatedUser);
+        }
+        return savedClubDesk;
+    }
+
+    /**
+     * <p>Sends a notification email to the iJUG office containing a summary of all changes made to the
+     * ClubDesk data of a member.</p>
+     *
+     * <p>The email includes only those fields whose values differ between the original and the updated
+     * data set. For each changed field, both the previous and the new value are listed in a
+     * human-readable diff format.</p>
+     *
+     * <p>If no differences are detected, no email is sent.</p>
+     *
+     * @param clubDeskOriginal the original ClubDesk data before the update; must not be {@code null}
+     * @param clubDeskUpdated the updated ClubDesk data after the change; must not be {@code null}
+     */
+    public void notifyOffice(final @NotNull ClubDeskDto clubDeskOriginal,
+                             final @NotNull ClubDeskDto clubDeskUpdated) {
+        final var locale = Locale.GERMAN;
+        final var lines = new StringBuilder();
+
+        addDiff(lines, locale, "firstname",
+                clubDeskOriginal.firstname(), clubDeskUpdated.firstname());
+
+        addDiff(lines, locale, "lastname",
+                clubDeskOriginal.lastname(), clubDeskUpdated.lastname());
+
+        addDiff(lines, locale, "address",
+                clubDeskOriginal.address(), clubDeskUpdated.address());
+
+        addDiff(lines, locale, "addressAddition",
+                clubDeskOriginal.addressAddition(), clubDeskUpdated.addressAddition());
+
+        addDiff(lines, locale, "zipCode",
+                clubDeskOriginal.zipCode(), clubDeskUpdated.zipCode());
+
+        addDiff(lines, locale, "city",
+                clubDeskOriginal.city(), clubDeskUpdated.city());
+
+        addDiff(lines, locale, "country",
+                displayCountry(clubDeskOriginal.country(), locale),
+                displayCountry(clubDeskUpdated.country(), locale));
+
+        addDiff(lines, locale, "email",
+                clubDeskOriginal.email(), clubDeskUpdated.email());
+
+        addDiff(lines, locale, "emailAlternative",
+                clubDeskOriginal.emailAlternative(), clubDeskUpdated.emailAlternative());
+
+        addDiff(lines, locale, "matrix",
+                clubDeskOriginal.matrix(), clubDeskUpdated.matrix());
+
+        addDiff(lines, locale, "mastodon",
+                clubDeskOriginal.mastodon(), clubDeskUpdated.mastodon());
+
+        addDiff(lines, locale, "linkedin",
+                clubDeskOriginal.linkedin(), clubDeskUpdated.linkedin());
+
+        addDiff(lines, locale, "sepaEnabled",
+                clubDeskOriginal.sepaEnabled(), clubDeskUpdated.sepaEnabled());
+
+        addDiff(lines, locale, "sepaAccountHolder",
+                clubDeskOriginal.sepaAccountHolder(), clubDeskUpdated.sepaAccountHolder());
+
+        addDiff(lines, locale, "sepaIban",
+                clubDeskOriginal.sepaIban(), clubDeskUpdated.sepaIban());
+
+        addDiff(lines, locale, "sepaBic",
+                clubDeskOriginal.sepaBic(), clubDeskUpdated.sepaBic());
+
+        addDiff(lines, locale, "javaUserGroup",
+                clubDeskOriginal.jug(), clubDeskUpdated.jug());
+
+        addDiff(lines, locale, "newsletter",
+                clubDeskOriginal.newsletter(), clubDeskUpdated.newsletter());
+
+        if (lines.isEmpty()) {
+            return;
+        }
+
+        final var subject = translationProvider.getTranslation(
+                "domain.clubdesk.control.ClubDeskService.email.office.subject", locale,
+                formatForDiff(clubDeskUpdated.firstname()), formatForDiff(clubDeskUpdated.lastname())
+        );
+
+        mailService.sendMail("office@ijug.eu", subject, lines.toString());
+    }
+
+    /**
+     * <p>Determines whether two values differ from each other.</p>
+     *
+     * <p>The comparison is {@code null}-safe and relies on {@link Objects#equals(Object, Object)}
+     * to check for value equality.</p>
+     *
+     * @param oldValue the original value; may be {@code null}
+     * @param newValue the updated value; may be {@code null}
+     * @return {@code true} if the values are different, {@code false} if they are equal
+     */
+    private static boolean changed(final @Nullable Object oldValue,
+                                   final @Nullable Object newValue) {
+        return !Objects.equals(oldValue, newValue);
+    }
+
+    /**
+     * <p>Adds a formatted diff line to the given output buffer if the provided values differ.</p>
+     *
+     * <p>The method resolves a human-readable field label via the translation provider and appends a
+     * single line describing the change in the form {@code &lt;label&gt;: &lt;old&gt; → &lt;new&gt;}.</p>
+     *
+     * <p>If the values are equal, the buffer remains unchanged.</p>
+     *
+     * @param lines the buffer to which the diff line is appended; must not be {@code null}
+     * @param locale the locale used to resolve the translated field label; must not be {@code null}
+     * @param fieldKey the translation key suffix identifying the field; must not be {@code null}
+     * @param oldValue the original value; may be {@code null}
+     * @param newValue the updated value; may be {@code null}
+     */
+    private void addDiff(final @NotNull StringBuilder lines,
+                         final @NotNull Locale locale,
+                         final @NotNull String fieldKey,
+                         final @Nullable Object oldValue,
+                         final @Nullable Object newValue) {
+
+        if (!changed(oldValue, newValue)) {
+            return;
+        }
+
+        final var label = translationProvider.getTranslation(
+                "domain.clubdesk.boundary.ClubDeskEditView.label." + fieldKey, locale);
+
+        lines.append(label)
+                .append(": ")
+                .append(formatForDiff(oldValue))
+                .append(" → ")
+                .append(formatForDiff(newValue))
+                .append('\n');
+    }
+
+    /**
+     * <p>Formats a value for inclusion in a human-readable diff output.</p>
+     *
+     * <p>{@code null} values are rendered as "[leer]" to clearly indicate missing data.
+     * Boolean values are converted into readable textual representations. All other values
+     * are formatted using their {@link Object#toString()} representation.</p>
+     *
+     * @param value the value to format; may be {@code null}
+     * @return a non-null, human-readable string representation of the value
+     */
+    private static @NotNull String formatForDiff(final @Nullable Object value) {
+        if (value == null) {
+            return "[leer]";
+        }
+        if (value instanceof Boolean b) {
+            return b ? "ja" : "nein";
+        }
+        final var text = value.toString();
+        return text.isBlank() ? "[leer]" : text;
+    }
+
+    /**
+     * <p>Returns a localized display name for the given country.</p>
+     *
+     * <p>If the country is {@code null}, the method returns {@code null}. Otherwise, the country name
+     * is resolved using the provided locale.</p>
+     *
+     * @param country the country to display; may be {@code null}
+     * @param locale the locale used to resolve the display name; must not be {@code null}
+     * @return the localized country name, or {@code null} if the country is {@code null}
+     */
+    private static @Nullable String displayCountry(final @Nullable Country country,
+                                                   final @NotNull Locale locale) {
+        return country == null ? null : country.displayName(locale);
     }
 
 }

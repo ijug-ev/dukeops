@@ -1,4 +1,4 @@
-/*
+/**
  * DukeOps - iJUG Self-Service Portal
  * Copyright (C) Marcus Fihlon and the individual contributors to DukeOps.
  *
@@ -15,30 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.ijug.dukeops.domain.clubdesk.entity;
+.clubdesk-edit-view vaadin-form-layout {
+    max-width: 50em;
+}
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+.clubdesk-edit-view .sepa-info {
+    font-size: var(--aura-font-size-s);
+    color: var(--aura-neutral);
+    transition: opacity 150ms ease;
+}
 
-public record ImportRecord(
-        @NotNull String firstname,
-        @NotNull String lastname,
-        @NotNull String address,
-        @NotNull String addressAddition,
-        @NotNull String zipCode,
-        @NotNull String city,
-        @Nullable Country country,
-
-        @NotNull String email,
-        @NotNull String emailAlternative,
-        @NotNull String matrix,
-        @NotNull String mastodon,
-        @NotNull String linkedin,
-
-        boolean sepaEnabled,
-        @NotNull String sepaAccountHolder,
-        @NotNull String sepaIban,
-        @NotNull String sepaBic,
-
-        @NotNull String jug
-) { }
+.clubdesk-edit-view p.disabled {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
