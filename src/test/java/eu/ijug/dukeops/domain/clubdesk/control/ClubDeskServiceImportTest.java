@@ -68,7 +68,7 @@ final class ClubDeskServiceImportTest {
                 "", "", "", "", null,
                 "john.doe@example.com",
                 "", "", "", "",
-                false, null, null, null,
+                false, "", "", "",
                 ""
         );
         when(clubDeskImporter.parse(any(Reader.class))).thenReturn(List.of(expected));
