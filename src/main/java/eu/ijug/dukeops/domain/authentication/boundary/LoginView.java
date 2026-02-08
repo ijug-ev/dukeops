@@ -54,12 +54,12 @@ public final class LoginView extends AbstractView {
         emailField.setRequired(true);
         emailField.setValueChangeMode(ValueChangeMode.EAGER);
         emailField.setClearButtonVisible(true);
-        emailField.addKeyPressListener(Key.ENTER, event -> handleLogin());
         add(emailField);
 
         submitButton = new Button(getTranslation("web.view.LoginView.login.button"));
         submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        submitButton.addClickListener(event -> handleLogin());
+        submitButton.addClickListener(_ -> handleLogin());
+        submitButton.addClickShortcut(Key.ENTER);
         add(submitButton);
 
         final var binder = new Binder<DummyBean>();
