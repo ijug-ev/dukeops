@@ -63,6 +63,21 @@ The server runs on port 8080 by default. If you don't like it, change it using a
 DUKEOPS_PORT=8080
 ```
 
+### Instance Configuration
+
+#### Admin
+
+When starting *DukeOps*, the system can automatically create an instance admin. To enable this, set the following environment variable to the email address of the admin:
+
+```
+DUKEOPS_INSTANCE_ADMIN=admin@example.com
+```
+
+If no user with the admin role is found in the database, a new instance admin will be created with the email address given.
+
+> [!WARNING]
+> This mechanism runs once on each start! It will **not** overwrite or update existing users with the same email address.
+
 ### Mail Configuration
 
 *DukeOps* supports sending email notifications. Configuration is done via environment variables using the `DUKEOPS_MAIL_*` naming scheme.
@@ -89,6 +104,7 @@ DUKEOPS_PORT=8080
 In a `.env` file, CI system, or Docker environment:
 
 ```bash
+DUKEOPS_INSTANCE_ADMIN=admin@example.com
 DUKEOPS_MAIL_FROM=noreply@example.com
 DUKEOPS_MAIL_REPLY_TO=support@example.com
 DUKEOPS_MAIL_HOST=smtp.example.com

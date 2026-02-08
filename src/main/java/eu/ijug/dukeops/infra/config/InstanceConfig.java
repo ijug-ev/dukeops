@@ -17,19 +17,6 @@
  */
 package eu.ijug.dukeops.infra.config;
 
-import eu.ijug.dukeops.infra.communication.mail.MailConfig;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
-@ConfigurationProperties(prefix = "dukeops")
-public record AppConfig(@NotNull String version,
-                        @NotNull String baseUrl,
-                        @NotNull MailConfig mail,
-                        @NotNull InstanceConfig instance) {
-
-    @ConstructorBinding
-    @SuppressWarnings({"java:S1186", "java:S6207"}) // needed to add the `@ConstructorBinding` annotation
-    public AppConfig { }
-
-}
+public record InstanceConfig(@NotNull String admin) { }

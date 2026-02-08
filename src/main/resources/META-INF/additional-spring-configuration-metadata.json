@@ -1,14 +1,19 @@
 {
-  "properties" : [
+  "properties": [
     {
-      "name" : "dukeops.mail.from",
-      "type" : "java.lang.String",
-      "description" : "Sender address shown in outgoing emails (e.g. noreply@example.com)."
+      "name": "dukeops.mail.from",
+      "type": "java.lang.String",
+      "description": "Sender address shown in outgoing emails (e.g. noreply@example.com)."
     },
     {
-      "name" : "dukeops.mail.reply-to",
-      "type" : "java.lang.String",
-      "description" : "Optional reply-to address (e.g. `support@example.com`)."
+      "name": "dukeops.mail.reply-to",
+      "type": "java.lang.String",
+      "description": "Optional reply-to address (e.g. `support@example.com`)."
+    },
+    {
+      "name": "dukeops.instance.admin",
+      "type": "java.lang.String",
+      "description": "Email address of the instance admin (e.g. `admin@example.com`)."
     }
   ]
 }
