@@ -30,6 +30,7 @@ import eu.ijug.dukeops.infra.ui.vaadin.i18n.TranslationProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -309,8 +310,35 @@ public class ClubDeskService {
      * @param clubDeskUpdated the updated ClubDesk data after the change; must not be {@code null}
      */
     public void notifyOffice(final @NotNull ClubDeskDto clubDeskOriginal,
-                             final @NotNull ClubDeskDto clubDeskUpdated) {
-        final var locale = Locale.GERMAN;
+                             final @NotNull ClubDeskDto clubDeskUpdated,
+                             final @NotNull Locale memberLocale) {
+        final var officeLocale = Locale.GERMAN;
+        final var diffForOffice = createDiff(clubDeskOriginal, clubDeskUpdated, officeLocale);
+        if (diffForOffice.isEmpty()) {
+            return;
+        }
+
+        final var mailToOfficeSubject = translationProvider.getTranslation(
+                "domain.clubdesk.control.ClubDeskService.email.office.subject", officeLocale,
+                clubDeskUpdated.firstname(), clubDeskUpdated.lastname());
+        mailService.sendMail("office@ijug.eu", mailToOfficeSubject, diffForOffice);
+
+        final var diffForMember = createDiff(clubDeskOriginal, clubDeskUpdated, memberLocale);
+        final var mailToMemberSubject = translationProvider.getTranslation(
+                "domain.clubdesk.control.ClubDeskService.email.member.subject", memberLocale);
+        final var mailToMemberBody = translationProvider.getTranslation(
+                "domain.clubdesk.control.ClubDeskService.email.member.body", memberLocale,
+                clubDeskUpdated.firstname(), clubDeskUpdated.lastname(), diffForMember);
+        mailService.sendMail(clubDeskOriginal.email(), mailToMemberSubject, mailToMemberBody);
+
+        if (!clubDeskOriginal.email().equals(clubDeskUpdated.email())) {
+            mailService.sendMail(clubDeskUpdated.email(), mailToMemberSubject, mailToMemberBody);
+        }
+    }
+
+    private @NonNull String createDiff(final @NonNull ClubDeskDto clubDeskOriginal,
+                                              final @NonNull ClubDeskDto clubDeskUpdated,
+                                              final @NotNull Locale locale) {
         final var lines = new StringBuilder();
 
         addDiff(lines, locale, "firstname",
@@ -368,16 +396,7 @@ public class ClubDeskService {
         addDiff(lines, locale, "newsletter",
                 clubDeskOriginal.newsletter(), clubDeskUpdated.newsletter());
 
-        if (lines.isEmpty()) {
-            return;
-        }
-
-        final var subject = translationProvider.getTranslation(
-                "domain.clubdesk.control.ClubDeskService.email.office.subject", locale,
-                formatForDiff(clubDeskUpdated.firstname()), formatForDiff(clubDeskUpdated.lastname())
-        );
-
-        mailService.sendMail("office@ijug.eu", subject, lines.toString());
+        return lines.toString().trim();
     }
 
     /**
@@ -424,31 +443,36 @@ public class ClubDeskService {
 
         lines.append(label)
                 .append(": ")
-                .append(formatForDiff(oldValue))
+                .append(formatForDiff(oldValue, locale))
                 .append(" → ")
-                .append(formatForDiff(newValue))
+                .append(formatForDiff(newValue, locale))
                 .append('\n');
     }
 
     /**
      * <p>Formats a value for inclusion in a human-readable diff output.</p>
      *
-     * <p>{@code null} values are rendered as "[leer]" to clearly indicate missing data.
+     * <p>{@code null} values are rendered as "[empty]" to clearly indicate missing data.
      * Boolean values are converted into readable textual representations. All other values
      * are formatted using their {@link Object#toString()} representation.</p>
      *
      * @param value the value to format; may be {@code null}
      * @return a non-null, human-readable string representation of the value
      */
-    private static @NotNull String formatForDiff(final @Nullable Object value) {
+    private @NotNull String formatForDiff(final @Nullable Object value,
+                                          final @NotNull Locale locale) {
+        final var empty = translationProvider.getTranslation("domain.clubdesk.control.ClubDeskService.diff.empty", locale);
+        final var yes = translationProvider.getTranslation("domain.clubdesk.control.ClubDeskService.diff.yes", locale);
+        final var no = translationProvider.getTranslation("domain.clubdesk.control.ClubDeskService.diff.no", locale);
+
         if (value == null) {
-            return "[leer]";
+            return "[" + empty + "]";
         }
         if (value instanceof Boolean b) {
-            return b ? "ja" : "nein";
+            return b ? yes : no;
         }
         final var text = value.toString();
-        return text.isBlank() ? "[leer]" : text;
+        return text.isBlank() ? "[" + empty + "]" : text;
     }
 
     /**

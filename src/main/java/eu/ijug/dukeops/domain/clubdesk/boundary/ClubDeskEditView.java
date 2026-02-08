@@ -117,7 +117,7 @@ public final class ClubDeskEditView extends AbstractView {
             saveButton.addClickListener(_ -> {
                 final var clubDeskUpdated = clubDeskService.save(buildDtoFromFields());
                 saveButton.setEnabled(false);
-                clubDeskService.notifyOffice(clubDeskOriginal, clubDeskUpdated);
+                clubDeskService.notifyOffice(clubDeskOriginal, clubDeskUpdated, getLocale());
                 clubDeskOriginal = clubDeskUpdated;
                 readBean();
 

@@ -34,11 +34,13 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.argThat;
@@ -300,7 +302,7 @@ final class ClubDeskServiceTest {
                 false, "", "", "",
                 "", true);
 
-        service.notifyOffice(clubDeskOriginal, clubDeskUpdated);
+        service.notifyOffice(clubDeskOriginal, clubDeskUpdated, Locale.ENGLISH);
 
         verifyNoInteractions(mailService);
     }
@@ -330,7 +332,7 @@ final class ClubDeskServiceTest {
                 false, "", "", "",
                 "", false);
 
-        service.notifyOffice(clubDeskOriginal, clubDeskUpdated);
+        service.notifyOffice(clubDeskOriginal, clubDeskUpdated, Locale.ENGLISH);
 
         verify(mailService).sendMail(
                 eq("office@ijug.eu"),
@@ -338,8 +340,23 @@ final class ClubDeskServiceTest {
                 eq("""
                         Vorname: John → Jane
                         E-Mail: john.doe@example.com → jane.doe@example.com
-                        Vereinsinformationen: ja → nein
-                        """));
+                        Vereinsinformationen: ja → nein"""));
+
+        verify(mailService).sendMail(
+                eq("john.doe@example.com"),
+                eq("[DukeOps] Your master data has been updated"),
+                contains("""
+                        First name: John → Jane
+                        Email: john.doe@example.com → jane.doe@example.com
+                        Club information: yes → no"""));
+
+        verify(mailService).sendMail(
+                eq("jane.doe@example.com"),
+                eq("[DukeOps] Your master data has been updated"),
+                contains("""
+                        First name: John → Jane
+                        Email: john.doe@example.com → jane.doe@example.com
+                        Club information: yes → no"""));
     }
 
 }
