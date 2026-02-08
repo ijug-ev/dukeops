@@ -17,14 +17,18 @@
  */
 package eu.ijug.dukeops;
 
+import com.vaadin.flow.server.AppShellSettings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.SpringApplication;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationTest {
@@ -45,4 +49,26 @@ class ApplicationTest {
                     times(1));
         }
     }
+
+    @Test
+    void configurePage_addsMetaTagFavIconsAndShortcutIcon() {
+        final var app = new Application();
+        final var settings = mock(AppShellSettings.class);
+
+        app.configurePage(settings);
+
+        verify(settings).addMetaTag("author", "iJUG Interessenverbund der Java User Groups e. V.");
+
+        verify(settings).addFavIcon("icon", "icons/icon.png", "1024x1024");
+        verify(settings).addFavIcon("icon", "icons/favicon-512x512.png", "512x512");
+        verify(settings).addFavIcon("icon", "icons/favicon-192x192.png", "192x192");
+        verify(settings).addFavIcon("icon", "icons/favicon-180x180.png", "180x180");
+        verify(settings).addFavIcon("icon", "icons/favicon-32x32.png", "32x32");
+        verify(settings).addFavIcon("icon", "icons/favicon-16x16.png", "16x16");
+
+        verify(settings).addLink("shortcut icon", "icons/favicon.ico");
+
+        verifyNoMoreInteractions(settings);
+    }
+
 }
