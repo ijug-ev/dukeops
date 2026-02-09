@@ -45,6 +45,7 @@ public record ClubDeskDto(
 
         boolean sepaEnabled,
         @NotNull String sepaAccountHolder,
+        @NotNull String sepaMandateReference,
         @NotNull String sepaIban,
         @NotNull String sepaBic,
 

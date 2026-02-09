@@ -98,6 +98,7 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
 
         final var sepaEnabled = parseBoolean(optional(row, "SEPA-Lastschrift erlauben"));
         final var sepaAccountHolder = optional(row, "Kontoinhaber");
+        final var sepaMandateReference = optional(row, "Mandatsreferenz");
         final var sepaIban = optional(row, "IBAN");
         final var sepaBic = optional(row, "BIC");
 
@@ -118,6 +119,7 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
                 linkedin,
                 sepaEnabled,
                 sepaAccountHolder,
+                sepaMandateReference,
                 sepaIban,
                 sepaBic,
                 jug

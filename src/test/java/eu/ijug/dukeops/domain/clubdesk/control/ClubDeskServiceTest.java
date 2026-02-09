@@ -32,6 +32,8 @@ import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +47,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -87,7 +90,7 @@ final class ClubDeskServiceTest {
                 "", "", "", "", null,
                 "john.doe@example.com",
                 "", "", "", "",
-                false, "", "", "",
+                false, "", "", "", "",
                 "JUG X"
         );
 
@@ -138,7 +141,7 @@ final class ClubDeskServiceTest {
                 "", "", "", "", null,
                 "john.doe@example.com",
                 "", "", "", "",
-                false, "", "", "",
+                false, "", "", "", "",
                 ""
         );
 
@@ -183,7 +186,7 @@ final class ClubDeskServiceTest {
                 "", "", "", "", null,
                 "john.doe@example.com",
                 "", "", "", "",
-                false, "", "", "",
+                false, "", "", "", "",
                 ""
         );
 
@@ -294,12 +297,12 @@ final class ClubDeskServiceTest {
         final var clubDeskOriginal = new ClubDeskDto(id, null, null,
                 "John", "Doe", "", "", "", "", null,
                 "john.doe@example.com", "", "", "", "",
-                false, "", "", "",
+                false, "", "", "", "",
                 "", true);
         final var clubDeskUpdated = new ClubDeskDto(id, null, null,
                 "John", "Doe", "", "", "", "", null,
                 "john.doe@example.com", "", "", "", "",
-                false, "", "", "",
+                false, "", "", "", "",
                 "", true);
 
         service.notifyOffice(clubDeskOriginal, clubDeskUpdated, Locale.ENGLISH);
@@ -324,12 +327,12 @@ final class ClubDeskServiceTest {
         final var clubDeskOriginal = new ClubDeskDto(id, null, null,
                 "John", "Doe", "", "", "", "", null,
                 "john.doe@example.com", "", "", "", "",
-                false, "", "", "",
+                false, "", "", "", "",
                 "", true);
         final var clubDeskUpdated = new ClubDeskDto(id, null, null,
                 "Jane", "Doe", "", "", "", "", null,
                 "jane.doe@example.com", "", "", "", "",
-                false, "", "", "",
+                false, "", "", "", "",
                 "", false);
 
         service.notifyOffice(clubDeskOriginal, clubDeskUpdated, Locale.ENGLISH);
@@ -359,4 +362,30 @@ final class ClubDeskServiceTest {
                         Club information: yes → no"""));
     }
 
+    @Test
+    void generateSepaMandateReference_withValidClubDeskDto_shouldGenerateReference() {
+        final var clubDeskDto = mock(ClubDeskDto.class);
+        when(clubDeskDto.id()).thenReturn(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
+
+        // same UUID, same mandate reference
+        for (int i = 0; i < 5; i++) {
+            assertThat(ClubDeskService.generateSepaMandateReference(clubDeskDto))
+                    .isEqualTo("IJUG-TBWA3SKW3SBC");
+        }
+    }
+
+    @Test
+    void generateSepaMandateReference_withMissingAlgorithm_throwsException() {
+        final var clubDeskDto = mock(ClubDeskDto.class);
+        when(clubDeskDto.id()).thenReturn(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
+
+        try(final var messageDigest = mockStatic(MessageDigest.class)) {
+            messageDigest.when(() -> MessageDigest.getInstance("SHA-256"))
+                    .thenThrow(new NoSuchAlgorithmException("boom"));
+
+            // expecting that the method throws an IllegalStateException wrapping the NoSuchAlgorithmException
+            assertThatThrownBy(() -> ClubDeskService.generateSepaMandateReference(clubDeskDto))
+                    .isInstanceOf(IllegalStateException.class);
+        }
+    }
 }

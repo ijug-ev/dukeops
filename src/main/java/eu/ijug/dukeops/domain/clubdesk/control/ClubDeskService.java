@@ -27,6 +27,7 @@ import eu.ijug.dukeops.domain.user.entity.UserDto;
 import eu.ijug.dukeops.domain.user.entity.UserRole;
 import eu.ijug.dukeops.infra.communication.mail.MailService;
 import eu.ijug.dukeops.infra.ui.vaadin.i18n.TranslationProvider;
+import org.apache.commons.codec.binary.Base32;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
@@ -41,6 +42,8 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -207,6 +210,7 @@ public class ClubDeskService {
 
                 importRecord.sepaEnabled(),
                 importRecord.sepaAccountHolder(),
+                importRecord.sepaMandateReference(),
                 importRecord.sepaIban(),
                 importRecord.sepaBic(),
 
@@ -384,6 +388,9 @@ public class ClubDeskService {
         addDiff(lines, locale, "sepaAccountHolder",
                 clubDeskOriginal.sepaAccountHolder(), clubDeskUpdated.sepaAccountHolder());
 
+        addDiff(lines, locale, "sepaMandateReference",
+                clubDeskOriginal.sepaMandateReference(), clubDeskUpdated.sepaMandateReference());
+
         addDiff(lines, locale, "sepaIban",
                 clubDeskOriginal.sepaIban(), clubDeskUpdated.sepaIban());
 
@@ -490,4 +497,32 @@ public class ClubDeskService {
         return country == null ? null : country.displayName(locale);
     }
 
+    /**
+     * <p>Generates a deterministic SEPA mandate reference for the given ClubDesk record.</p>
+     *
+     * <p>The mandate reference is derived from the record's UUID by applying an SHA-256 hash,
+     * encoding the result using Base32, and truncating it to a fixed length. This ensures
+     * a short, human-readable, and stable identifier without exposing internal UUIDs.</p>
+     *
+     * <p>The generated reference uses the fixed prefix {@code IJUG-} and must be generated
+     * exactly once when SEPA is first enabled for the record.</p>
+     *
+     * @param clubDeskDto the ClubDesk record for which the mandate reference is generated
+     * @return the generated SEPA mandate reference
+     */
+    public static @NotNull String generateSepaMandateReference(final @NotNull ClubDeskDto clubDeskDto) {
+        try {
+            final var digest = MessageDigest.getInstance("SHA-256");
+            final var hash = digest.digest(clubDeskDto.id().toString().getBytes(StandardCharsets.UTF_8));
+
+            final var base32 = new Base32()
+                    .encodeToString(hash)
+                    .replace("=", "")
+                    .substring(0, 12);
+
+            return "IJUG-" + base32;
+        } catch (final NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 algorithm is not available.", e);
+        }
+    }
 }

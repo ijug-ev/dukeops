@@ -72,6 +72,7 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 "",
+                "",
                 "JUG CH"
         );
 
@@ -121,6 +122,7 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 "",
+                "",
                 "JUG CH"
         );
 
@@ -153,6 +155,7 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 false,
+                "",
                 "",
                 "",
                 "",

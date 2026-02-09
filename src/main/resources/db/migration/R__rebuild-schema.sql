@@ -39,6 +39,7 @@ CREATE TABLE clubdesk (
 
     sepa_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     sepa_account_holder VARCHAR(255) NOT NULL DEFAULT '',
+    sepa_mandate_reference VARCHAR(35) NOT NULL DEFAULT '',
     sepa_iban VARCHAR(34) NOT NULL DEFAULT '',
     sepa_bic VARCHAR(11) NOT NULL DEFAULT '',
 

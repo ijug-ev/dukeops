@@ -45,6 +45,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static eu.ijug.dukeops.domain.clubdesk.control.ClubDeskService.generateSepaMandateReference;
+
 @RolesAllowed("USER")
 @Route(value = "clubdesk/edit", layout = WebsiteLayout.class)
 public final class ClubDeskEditView extends AbstractView {
@@ -70,6 +72,7 @@ public final class ClubDeskEditView extends AbstractView {
     private final @NotNull Paragraph sepaAllowInfo = new Paragraph();
     private final @NotNull Paragraph sepaCancelInfo = new Paragraph();
     private final @NotNull TextField sepaAccountHolder = new TextField();
+    private final @NotNull TextField sepaMandateReference = new TextField();
     private final @NotNull TextField sepaIban = new TextField();
     private final @NotNull TextField sepaBic = new TextField();
 
@@ -107,7 +110,7 @@ public final class ClubDeskEditView extends AbstractView {
 
             Stream.of(firstname, lastname, address, addressAddition, zipCode, city, country,
                             email, emailAlternative, matrix, mastodon, linkedin,
-                            sepaEnabled, sepaAccountHolder, sepaIban, sepaBic,
+                            sepaEnabled, sepaAccountHolder, sepaMandateReference, sepaIban, sepaBic,
                             javaUserGroup, newsletter)
                     .forEach(HasSize::setWidthFull);
 
@@ -142,7 +145,7 @@ public final class ClubDeskEditView extends AbstractView {
 
             Stream.of(firstname, lastname, address, addressAddition, zipCode, city,
                             email, emailAlternative, matrix, mastodon, linkedin,
-                            sepaAccountHolder, sepaIban, sepaBic)
+                            sepaAccountHolder, sepaMandateReference, sepaIban, sepaBic)
                     .forEach(field -> {
                         field.setValueChangeMode(ValueChangeMode.EAGER);
                         field.addValueChangeListener(_ -> updateSaveState.run());
@@ -291,6 +294,11 @@ public final class ClubDeskEditView extends AbstractView {
                         getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaAccountHolder"))
                 .bind(ClubDeskDto::sepaAccountHolder, null);
 
+        sepaMandateReference.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaMandateReference"));
+        sepaMandateReference.setReadOnly(true);
+        binder.forField(sepaMandateReference)
+                .bind(ClubDeskDto::sepaMandateReference, null);
+
         sepaIban.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaIban"));
         binder.forField(sepaIban)
                 .withValidator(value -> !sepaEnabled.getValue() || !value.isBlank(),
@@ -308,11 +316,12 @@ public final class ClubDeskEditView extends AbstractView {
         sepaCancelInfo.setText(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.info.sepa.cancel"));
         sepaCancelInfo.addClassName("sepa-info");
 
-        formLayout.add(sepaEnabled, sepaAllowInfo, sepaCancelInfo, sepaAccountHolder, sepaIban, sepaBic);
+        formLayout.add(sepaEnabled, sepaAllowInfo, sepaCancelInfo, sepaAccountHolder, sepaMandateReference, sepaIban, sepaBic);
         formLayout.setColspan(sepaEnabled, 6);
         formLayout.setColspan(sepaAllowInfo, 6);
         formLayout.setColspan(sepaCancelInfo, 6);
-        formLayout.setColspan(sepaAccountHolder, 6);
+        formLayout.setColspan(sepaAccountHolder, 4);
+        formLayout.setColspan(sepaMandateReference, 2);
         formLayout.setColspan(sepaIban, 4);
         formLayout.setColspan(sepaBic, 2);
     }
@@ -323,10 +332,16 @@ public final class ClubDeskEditView extends AbstractView {
         sepaCancelInfo.getClassNames().set("disabled", !isSepaEnabled);
         sepaAccountHolder.setEnabled(isSepaEnabled);
         sepaAccountHolder.setRequiredIndicatorVisible(isSepaEnabled);
+        sepaMandateReference.setEnabled(isSepaEnabled);
+        sepaMandateReference.setRequiredIndicatorVisible(isSepaEnabled);
         sepaIban.setEnabled(isSepaEnabled);
         sepaIban.setRequiredIndicatorVisible(isSepaEnabled);
         sepaBic.setEnabled(isSepaEnabled);
         sepaBic.setRequiredIndicatorVisible(isSepaEnabled);
+
+        if (isSepaEnabled && sepaMandateReference.getValue().isBlank()) {
+            sepaMandateReference.setValue(generateSepaMandateReference(clubDeskOriginal));
+        }
     }
 
     private void addJavaUserGroup(final @NotNull FormLayout formLayout) {
@@ -404,6 +419,7 @@ public final class ClubDeskEditView extends AbstractView {
                 linkedin.getValue().trim(),
                 isSepaEnabled,
                 isSepaEnabled ? sepaAccountHolder.getValue().trim() : "",
+                isSepaEnabled ? sepaMandateReference.getValue().trim() : "",
                 isSepaEnabled ? sepaIban.getValue().trim() : "",
                 isSepaEnabled ? sepaBic.getValue().trim() : "",
                 javaUserGroup.getValue(),

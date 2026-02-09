@@ -1,2 +1,2 @@
-"E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
-"john.doe@example.com";"John";"Doe";"Main Street 1";"";"8000";"Zurich";"Switzerland";"";"";"";"";"Ja";"John Doe";"CH9300762011623852957000000000000000000";"POFICHBEXXX";"JUG CH"
+"E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Kontoinhaber";"Mandatsreferenz";"IBAN";"BIC";"Java User Group"
+"john.doe@example.com";"John";"Doe";"Main Street 1";"";"8000";"Zurich";"Switzerland";"";"";"";"";"Ja";"John Doe";"TEST-12345";"CH9300762011623852957000000000000000000";"POFICHBEXXX";"JUG CH"

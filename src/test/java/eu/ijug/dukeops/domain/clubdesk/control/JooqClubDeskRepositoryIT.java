@@ -122,6 +122,7 @@ final class JooqClubDeskRepositoryIT extends IntegrationTest {
 
                 false, // sepaEnabled
                 "",    // accountHolder
+                "",    // mandateReference
                 "",    // iban
                 "",    // bic
 

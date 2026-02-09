@@ -81,7 +81,7 @@ public class ClubDeskEditViewKT extends KaribuTest {
         clubDeskService.save(new ClubDeskDto(userDto.id(), null, null,
                 "John", "Doe", "", "", "", "", null,
                 "john.doe@example.com", "", "", "", "",
-                false, "", "", "",
+                false, "", "", "", "",
                 "", true));
 
         login(userDto);
@@ -285,7 +285,7 @@ public class ClubDeskEditViewKT extends KaribuTest {
         clubDeskService.save(new ClubDeskDto(userDto.id(), null, null,
                 "John", "Doe", "", "", "", "", null,
                 "john.doe@example.com", "", "", "", "",
-                true, "test", "test", "test",
+                true, "test", "test", "test", "test",
                 "", true));
 
         login(userDto);
