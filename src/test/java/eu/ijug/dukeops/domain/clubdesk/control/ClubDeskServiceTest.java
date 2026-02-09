@@ -44,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.mock;
@@ -52,6 +53,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 final class ClubDeskServiceTest {
@@ -348,18 +350,14 @@ final class ClubDeskServiceTest {
         verify(mailService).sendMail(
                 eq("john.doe@example.com"),
                 eq("[DukeOps] Your master data has been updated"),
-                contains("""
-                        First name: John → Jane
-                        Email: john.doe@example.com → jane.doe@example.com
-                        Club information: yes → no"""));
+                startsWith("Hello John Doe"));
 
         verify(mailService).sendMail(
                 eq("jane.doe@example.com"),
                 eq("[DukeOps] Your master data has been updated"),
-                contains("""
-                        First name: John → Jane
-                        Email: john.doe@example.com → jane.doe@example.com
-                        Club information: yes → no"""));
+                startsWith("Hello Jane Doe"));
+
+        verifyNoMoreInteractions(mailService);
     }
 
     @Test
