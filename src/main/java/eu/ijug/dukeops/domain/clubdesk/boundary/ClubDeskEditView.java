@@ -51,6 +51,11 @@ import static eu.ijug.dukeops.domain.clubdesk.control.ClubDeskService.generateSe
 @Route(value = "clubdesk/edit", layout = WebsiteLayout.class)
 public final class ClubDeskEditView extends AbstractView {
 
+    private static final int MAX_LENGTH_SEPA_ACCOUNT_HOLDER = 70;
+    private static final int MAX_LENGTH_SEPA_MANDATE_REFERENCE = 35;
+    private static final int MAX_LENGTH_SEPA_IBAN = 34;
+    private static final int MAX_LENGTH_SEPA_BIC = 11;
+
     private final @NotNull ClubDeskService clubDeskService;
 
     private final @NotNull TextField firstname = new TextField();
@@ -289,23 +294,27 @@ public final class ClubDeskEditView extends AbstractView {
         sepaEnabled.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaEnabled"));
 
         sepaAccountHolder.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaAccountHolder"));
+        sepaAccountHolder.setMaxLength(MAX_LENGTH_SEPA_ACCOUNT_HOLDER);
         binder.forField(sepaAccountHolder)
                 .withValidator(value -> !sepaEnabled.getValue() || !value.isBlank(),
                         getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaAccountHolder"))
                 .bind(ClubDeskDto::sepaAccountHolder, null);
 
         sepaMandateReference.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaMandateReference"));
+        sepaMandateReference.setMaxLength(MAX_LENGTH_SEPA_MANDATE_REFERENCE);
         sepaMandateReference.setReadOnly(true);
         binder.forField(sepaMandateReference)
                 .bind(ClubDeskDto::sepaMandateReference, null);
 
         sepaIban.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaIban"));
+        sepaIban.setMaxLength(MAX_LENGTH_SEPA_IBAN);
         binder.forField(sepaIban)
                 .withValidator(value -> !sepaEnabled.getValue() || !value.isBlank(),
                         getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaIban"))
                 .bind(ClubDeskDto::sepaIban, null);
 
         sepaBic.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaBic"));
+        sepaBic.setMaxLength(MAX_LENGTH_SEPA_BIC);
         binder.forField(sepaBic)
                 .withValidator(value -> !sepaEnabled.getValue() || !value.isBlank(),
                         getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaBic"))
