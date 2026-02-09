@@ -327,16 +327,18 @@ public class ClubDeskService {
                 clubDeskUpdated.firstname(), clubDeskUpdated.lastname());
         mailService.sendMail("office@ijug.eu", mailToOfficeSubject, diffForOffice);
 
-        final var diffForMember = createDiff(clubDeskOriginal, clubDeskUpdated, memberLocale);
         final var mailToMemberSubject = translationProvider.getTranslation(
                 "domain.clubdesk.control.ClubDeskService.email.member.subject", memberLocale);
-        final var mailToMemberBody = translationProvider.getTranslation(
+        final var mailToMemberOriginal = translationProvider.getTranslation(
                 "domain.clubdesk.control.ClubDeskService.email.member.body", memberLocale,
-                clubDeskUpdated.firstname(), clubDeskUpdated.lastname(), diffForMember);
-        mailService.sendMail(clubDeskOriginal.email(), mailToMemberSubject, mailToMemberBody);
+                clubDeskOriginal.firstname(), clubDeskOriginal.lastname());
+        mailService.sendMail(clubDeskOriginal.email(), mailToMemberSubject, mailToMemberOriginal);
 
         if (!clubDeskOriginal.email().equals(clubDeskUpdated.email())) {
-            mailService.sendMail(clubDeskUpdated.email(), mailToMemberSubject, mailToMemberBody);
+            final var mailToMemberUpdated = translationProvider.getTranslation(
+                    "domain.clubdesk.control.ClubDeskService.email.member.body", memberLocale,
+                    clubDeskUpdated.firstname(), clubDeskUpdated.lastname());
+            mailService.sendMail(clubDeskUpdated.email(), mailToMemberSubject, mailToMemberUpdated);
         }
     }
 
