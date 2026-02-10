@@ -42,7 +42,7 @@ public final class PageHeader extends Header {
         addClassName("page-header");
 
         // Logo
-        final var logo = new Image("/icons/icon.png", "DukeOps Logo");
+        final var logo = new Image("/images/logo.webp", "DukeOps Logo");
         logo.addClassName("logo");
         logo.addClickListener(_ -> handleLogoClick(getUI().orElseThrow(), authenticationService, navigator));
 
