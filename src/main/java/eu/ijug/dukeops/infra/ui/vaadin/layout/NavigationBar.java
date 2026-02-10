@@ -28,8 +28,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
+import eu.ijug.dukeops.SecurityConfig;
 import eu.ijug.dukeops.domain.authentication.boundary.LoginView;
-import eu.ijug.dukeops.domain.authentication.boundary.LogoutView;
 import eu.ijug.dukeops.domain.authentication.entity.AuthenticationSignal;
 import eu.ijug.dukeops.domain.dashboard.boundary.DashboardView;
 import eu.ijug.dukeops.infra.ui.vaadin.control.ThemeUtil;
@@ -54,7 +54,8 @@ public final class NavigationBar extends HorizontalLayout {
     private Component createNavigationBar(final @NotNull AuthenticationSignal authenticationSignal) {
         final var dashboardLink = new RouterLink(getTranslation("web.view.DashboardView.title"), DashboardView.class);
         final var loginLink = new RouterLink(getTranslation("web.view.LoginView.title"), LoginView.class);
-        final var logoutLink = new RouterLink(getTranslation("web.view.LogoutView.title"), LogoutView.class);
+        final var logoutLink = new Anchor(SecurityConfig.LOGOUT_URL, getTranslation("web.layout.NavigationBar.logoutLink.text"));
+        logoutLink.setRouterIgnore(true);
 
         final var imprintLink = new Anchor("https://www.ijug.eu/impressum",
                 getTranslation("web.layout.NavigationBar.imprintLink.text"),
@@ -91,7 +92,7 @@ public final class NavigationBar extends HorizontalLayout {
     static void updateAuthenticationVisibility(final @NonNull AuthenticationSignal authenticationSignal,
                                                final @NotNull RouterLink dashboardLink,
                                                final @NotNull RouterLink loginLink,
-                                               final @NotNull RouterLink logoutLink) {
+                                               final @NotNull Anchor logoutLink) {
         boolean isLoggedIn;
         try {
             isLoggedIn = authenticationSignal.isAuthenticated();

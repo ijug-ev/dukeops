@@ -22,10 +22,12 @@ import eu.ijug.dukeops.domain.authentication.boundary.LoginView;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
  * <p>Security configuration for the DukeOps application.</p>
@@ -42,6 +44,11 @@ public class SecurityConfig {
      * <p>The URL of the login page.</p>
      */
     public static final @NotNull String LOGIN_URL = "/login";
+
+    /**
+     * <p>The URL of the logout page.</p>
+     */
+    public static final @NotNull String LOGOUT_URL = "/logout";
 
     /**
      * <p>The URL to redirect to after a successful logout.</p>
@@ -79,6 +86,13 @@ public class SecurityConfig {
         // Apply Vaadin security defaults and set the login view and logout success URL
         http.with(VaadinSecurityConfigurer.vaadin(), configurer ->
                 configurer.loginView(LoginView.class, LOGOUT_SUCCESS_URL)
+        );
+
+        // Allow logout with GET requests to support logout via anchor links in the UI
+        http.logout(logout -> logout
+                .logoutRequestMatcher(PathPatternRequestMatcher.pathPattern(HttpMethod.GET, LOGOUT_URL))
+                .logoutSuccessUrl(LOGOUT_SUCCESS_URL)
+                .permitAll()
         );
 
         // Build and return the filter chain

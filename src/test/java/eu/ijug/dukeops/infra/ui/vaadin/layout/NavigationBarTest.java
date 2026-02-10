@@ -17,6 +17,7 @@
  */
 package eu.ijug.dukeops.infra.ui.vaadin.layout;
 
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouterLink;
 import eu.ijug.dukeops.domain.authentication.entity.AuthenticationSignal;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ class NavigationBarTest {
 
         final var dashboard = mock(RouterLink.class);
         final var login = mock(RouterLink.class);
-        final var logout = mock(RouterLink.class);
+        final var logout = mock(Anchor.class);
 
         NavigationBar.updateAuthenticationVisibility(signal, dashboard, login, logout);
 
@@ -50,7 +51,7 @@ class NavigationBarTest {
 
         final var dashboard = mock(RouterLink.class);
         final var login = mock(RouterLink.class);
-        final var logout = mock(RouterLink.class);
+        final var logout = mock(Anchor.class);
 
         NavigationBar.updateAuthenticationVisibility(signal, dashboard, login, logout);
 
@@ -66,7 +67,7 @@ class NavigationBarTest {
 
         final var dashboard = mock(RouterLink.class);
         final var login = mock(RouterLink.class);
-        final var logout = mock(RouterLink.class);
+        final var logout = mock(Anchor.class);
 
         NavigationBar.updateAuthenticationVisibility(signal, dashboard, login, logout);
 

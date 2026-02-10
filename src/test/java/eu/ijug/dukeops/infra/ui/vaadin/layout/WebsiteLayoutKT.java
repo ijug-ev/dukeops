@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static eu.ijug.dukeops.test.TestUtil.assertContainsExactlyOneAnchorLinkOf;
 import static eu.ijug.dukeops.test.TestUtil.assertContainsExactlyOneInstanceOf;
 import static eu.ijug.dukeops.test.TestUtil.assertContainsExactlyOneRouterLinkOf;
 import static eu.ijug.dukeops.test.TestUtil.findComponent;
@@ -98,8 +99,12 @@ class WebsiteLayoutKT extends KaribuTest {
         final var routerLinks = findComponents(navigationBar, RouterLink.class);
         assertContainsExactlyOneRouterLinkOf(routerLinks,
                 new Anchor("", "Dashboard"),
-                new Anchor("login", "Login"),
-                new Anchor("logout", "Logout")
+                new Anchor("login", "Login")
+        );
+        final var anchorLinks = findComponents(navigationBar, Anchor.class);
+        assertContainsExactlyOneAnchorLinkOf(anchorLinks,
+                new Anchor("/logout", "Logout"),
+                new Anchor("https://www.ijug.eu/impressum", "Imprint")
         );
     }
 

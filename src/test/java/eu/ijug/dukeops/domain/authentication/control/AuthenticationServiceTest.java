@@ -17,8 +17,6 @@
  */
 package eu.ijug.dukeops.domain.authentication.control;
 
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
@@ -46,8 +44,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class AuthenticationServiceTest {
@@ -116,6 +112,7 @@ class AuthenticationServiceTest {
 
         final var securityContext = SecurityContextHolder.getContext();
         final var authentication = securityContext.getAuthentication();
+        assertThat(authentication).isNotNull();
         final var authorities = authentication.getAuthorities();
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
@@ -149,6 +146,7 @@ class AuthenticationServiceTest {
 
         final var securityContext = SecurityContextHolder.getContext();
         final var authentication = securityContext.getAuthentication();
+        assertThat(authentication).isNotNull();
         final var authorities = authentication.getAuthorities();
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
@@ -183,6 +181,7 @@ class AuthenticationServiceTest {
 
         final var securityContext = SecurityContextHolder.getContext();
         final var authentication = securityContext.getAuthentication();
+        assertThat(authentication).isNotNull();
         final var authorities = authentication.getAuthorities();
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
@@ -217,6 +216,7 @@ class AuthenticationServiceTest {
 
         final var securityContext = SecurityContextHolder.getContext();
         final var authentication = securityContext.getAuthentication();
+        assertThat(authentication).isNotNull();
         final var authorities = authentication.getAuthorities();
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
@@ -246,6 +246,7 @@ class AuthenticationServiceTest {
 
         final var securityContext = SecurityContextHolder.getContext();
         final var authentication = securityContext.getAuthentication();
+        assertThat(authentication).isNotNull();
         final var authorities = authentication.getAuthorities();
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
@@ -279,6 +280,7 @@ class AuthenticationServiceTest {
 
         final var securityContext = SecurityContextHolder.getContext();
         final var authentication = securityContext.getAuthentication();
+        assertThat(authentication).isNotNull();
         final var authorities = authentication.getAuthorities();
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
@@ -288,74 +290,6 @@ class AuthenticationServiceTest {
         assertThat(loggedInUser.name()).isEqualTo("Test Admin");
         assertThat(loggedInUser.email()).isEqualTo("admin@example.com");
         assertThat(loggedInUser.role()).isEqualTo(UserRole.ADMIN);
-    }
-
-    @Test
-    void logoutWithoutLoggedInUserShouldRedirectOnly() {
-        final var page = mock(Page.class);
-        final var ui = mock(UI.class);
-        when(ui.getPage()).thenReturn(page);
-
-        try (var logCaptor = LogCaptor.forClass(AuthenticationService.class)) {
-            authenticationService.logout(ui, "/redirect-url");
-            assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "No authenticated user found; logout skipped.");
-        }
-
-        verify(page).setLocation("/redirect-url");
-        verifyNoMoreInteractions(page);
-    }
-
-    @Test
-    void logoutWithLoggedInUserShouldLogoutAndRedirect() {
-        // reuse login test to log in a user
-        loginShouldSucceedWithExistingUserWithRequestAndResponse();
-
-        final var page = mock(Page.class);
-        final var ui = mock(UI.class);
-        when(ui.getPage()).thenReturn(page);
-
-        try (var vaadinServletRequestStatic = mockStatic(VaadinServletRequest.class);
-             var logCaptor = LogCaptor.forClass(AuthenticationService.class)) {
-
-            final var vaadinServletRequest = mock(VaadinServletRequest.class);
-            when(vaadinServletRequest.getHttpServletRequest()).thenReturn(mock(HttpServletRequest.class));
-            vaadinServletRequestStatic.when(VaadinServletRequest::getCurrent).thenReturn(vaadinServletRequest);
-
-            authenticationService.logout(ui, "/redirect-url");
-            assertThat(logCaptor.getWarnLogs()).isEmpty();
-            assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "User with email 'user@example.com' successfully logged out.");
-        }
-
-        verify(page).setLocation("/redirect-url");
-        verifyNoMoreInteractions(page);
-    }
-
-    @Test
-    void logoutWithUiOnlyShouldRedirectToDefaultLocation() {
-        // reuse login test to log in a user
-        loginShouldSucceedWithExistingUserWithRequestAndResponse();
-
-        final var page = mock(Page.class);
-        final var ui = mock(UI.class);
-        when(ui.getPage()).thenReturn(page);
-
-        try (var vaadinServletRequestStatic = mockStatic(VaadinServletRequest.class);
-             var logCaptor = LogCaptor.forClass(AuthenticationService.class)) {
-
-            final var vaadinServletRequest = mock(VaadinServletRequest.class);
-            when(vaadinServletRequest.getHttpServletRequest()).thenReturn(mock(HttpServletRequest.class));
-            vaadinServletRequestStatic.when(VaadinServletRequest::getCurrent).thenReturn(vaadinServletRequest);
-
-            authenticationService.logout(ui);
-            assertThat(logCaptor.getWarnLogs()).isEmpty();
-            assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "User with email 'user@example.com' successfully logged out.");
-        }
-
-        verify(page).setLocation("/login");
-        verifyNoMoreInteractions(page);
     }
 
     @Test

@@ -86,7 +86,7 @@ class NavigationBarBT extends BrowserTest {
         assertSoftly(softly -> {
             softly.assertThat(page.locator(".navigation-bar a[href='']").isVisible()).isTrue();
             softly.assertThat(page.locator(".navigation-bar a[href='login']").isVisible()).isFalse();
-            softly.assertThat(page.locator(".navigation-bar a[href='logout']").isVisible()).isTrue();
+            softly.assertThat(page.locator(".navigation-bar a[href='/logout']").isVisible()).isTrue();
             softly.assertThat(page.locator(".navigation-bar a[href='https://www.ijug.eu/impressum']").isVisible()).isTrue();
         });
     }

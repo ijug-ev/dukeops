@@ -25,6 +25,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.VaadinServletRequest;
+import eu.ijug.dukeops.SecurityConfig;
+import eu.ijug.dukeops.domain.authentication.boundary.LoginView;
 import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.domain.authentication.entity.UserPrincipal;
 import eu.ijug.dukeops.domain.user.entity.UserDto;
@@ -142,17 +144,28 @@ public abstract class KaribuTest extends IntegrationTest {
     }
 
     /**
-     * Logout a previously logged-in user.
+     * <p>Logs out a previously logged-in user in Karibu-based tests.</p>
      *
-     * @param ui the Vaadin UI instance
+     * <p>The helper clears the Spring Security context and updates the current Vaadin mock request
+     * so that {@code VaadinServletRequest}, {@code ViewAccessChecker} and other security-related
+     * checks behave as if the user had logged out.</p>
+     *
+     * <p>This does not execute the Spring Security {@code /logout} endpoint. If a test needs to
+     * verify navigation after logout, it must trigger navigation explicitly.</p>
+     *
+     * @param ui the current Vaadin UI instance
      */
     protected void logout(final @NotNull UI ui) {
-        if (VaadinServletRequest.getCurrent() != null) {
-            final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();
+        SecurityContextHolder.clearContext();
+
+        final var vaadinRequest = VaadinServletRequest.getCurrent();
+        if (vaadinRequest != null) {
+            final var request = (FakeRequest) vaadinRequest.getRequest();
             request.setUserPrincipalInt(null);
             request.setUserInRole((_, _) -> false);
         }
-        authenticationService.logout(ui);
+
+        ui.navigate(SecurityConfig.LOGOUT_SUCCESS_URL);
     }
 
 }

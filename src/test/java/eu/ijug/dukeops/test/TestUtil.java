@@ -142,6 +142,49 @@ public final class TestUtil {
     }
 
     /**
+     * <p>Asserts that the given list of {@link Anchor} components contains exactly one instance
+     * for each of the specified {@link Anchor} links, matching both the text and the href.</p>
+     *
+     * <p>This method verifies that:</p>
+     * <ul>
+     *   <li>The total number of {@code anchorLinks} matches the number of {@code expectedLinks}.</li>
+     *   <li>Each {@code Anchor} provided in {@code expectedLinks} has exactly one corresponding {@code Anchor}
+     *       in the list, where both the link text and href are equal.</li>
+     * </ul>
+     *
+     * <p><strong>Usage example:</strong></p>
+     * <pre>{@code
+     * List<Anchor> links = ...;
+     * assertContainsExactlyOneAnchorLinkOf(links,
+     *     new Anchor("/", "Home"),
+     *     new Anchor("/about", "About"));
+     * }</pre>
+     *
+     * @param anchorLinks the actual list of {@code Anchor} components to verify
+     * @param expectedLinks the expected links, defined as {@code Anchor} instances with text and href
+     * @throws AssertionError if the number of links differs, or if any expected link is missing or duplicated
+     */
+    public static void assertContainsExactlyOneAnchorLinkOf(final @NotNull List<Anchor> anchorLinks,
+                                                            final @NotNull Anchor... expectedLinks) {
+        assertThat(anchorLinks).hasSize(expectedLinks.length);
+
+        for (final var expectedLink : expectedLinks) {
+            final var text = expectedLink.getText();
+            final var href = expectedLink.getHref();
+
+            final var count = anchorLinks.stream()
+                    .filter(anchorLink -> anchorLink.getText().equals(text)
+                            && anchorLink.getHref().equals(href))
+                    .count();
+            assertThat(count)
+                    .withFailMessage(
+                            "Expected exactly one link with text '%s' and href '%s', but found %d.",
+                            text, href, count)
+                    .isEqualTo(1);
+        }
+    }
+
+    /**
      * <p>Recursively searches the component tree starting from the given {@code root}
      * and returns the first component that is an instance of the specified {@code type}.</p>
      *

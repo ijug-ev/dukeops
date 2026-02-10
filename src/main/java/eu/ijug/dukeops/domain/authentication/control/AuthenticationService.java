@@ -17,11 +17,9 @@
  */
 package eu.ijug.dukeops.domain.authentication.control;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
-import eu.ijug.dukeops.SecurityConfig;
 import eu.ijug.dukeops.domain.authentication.entity.AuthenticationSignal;
 import eu.ijug.dukeops.domain.authentication.entity.UserPrincipal;
 import eu.ijug.dukeops.domain.user.control.UserService;
@@ -35,7 +33,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
@@ -171,39 +168,6 @@ public class AuthenticationService {
      */
     public boolean isUserLoggedIn() {
         return getUserPrincipal().isPresent();
-    }
-
-    /**
-     * <p>Logs out the current user and redirects the browser to the configured default logout success URL.</p>
-     *
-     * @param ui the Vaadin UI instance used to redirect the browser
-     */
-    public void logout(final @NotNull UI ui) {
-        logout(ui, SecurityConfig.LOGOUT_SUCCESS_URL);
-    }
-
-    /**
-     * <p>Logs out the current user and redirects the browser to the specified location.</p>
-     *
-     * <p>If no authenticated user is present, the method logs a warning and still performs the redirect.</p>
-     *
-     * @param ui the Vaadin UI instance used to redirect the browser
-     * @param location the URL to redirect to after logout
-     */
-    public void logout(final @NotNull UI ui,
-                       final @NotNull String location) {
-        final var user = getLoggedInUser().orElse(null);
-        if (user == null) {
-            LOGGER.warn("No authenticated user found; logout skipped.");
-        } else {
-            final var email = user.email();
-            authenticationSignal.setAuthenticated(false, false);
-            SecurityContextHolder.clearContext();
-            final var logoutHandler = new SecurityContextLogoutHandler();
-            logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
-            LOGGER.info("User with email '{}' successfully logged out.", email);
-        }
-        ui.getPage().setLocation(location);
     }
 
 }
