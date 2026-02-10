@@ -34,6 +34,8 @@ import eu.ijug.dukeops.domain.authentication.entity.AuthenticationSignal;
 import eu.ijug.dukeops.domain.dashboard.boundary.DashboardView;
 import eu.ijug.dukeops.infra.ui.vaadin.control.ThemeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
+import org.jspecify.annotations.NonNull;
 
 public final class NavigationBar extends HorizontalLayout {
 
@@ -58,18 +60,47 @@ public final class NavigationBar extends HorizontalLayout {
                 getTranslation("web.layout.NavigationBar.imprintLink.text"),
                 AnchorTarget.BLANK);
 
-        // update menu items based on authentication state
-        ComponentEffect.effect(this, () -> {
-            final var isLoggedIn = authenticationSignal.isAuthenticated();
-            dashboardLink.setVisible(isLoggedIn);
-            loginLink.setVisible(!isLoggedIn);
-            logoutLink.setVisible(isLoggedIn);
-        });
+        ComponentEffect.effect(this, () ->
+                updateAuthenticationVisibility(authenticationSignal, dashboardLink, loginLink, logoutLink));
 
         final var menuBar = new Nav();
         menuBar.addClassName("menu-bar");
         menuBar.add(dashboardLink, loginLink, logoutLink, imprintLink);
         return menuBar;
+    }
+
+    /**
+     * <p>Updates the visibility of navigation elements based on the current authentication state.</p>
+     *
+     * <p>The method evaluates the authentication state via the given {@link AuthenticationSignal}
+     * and adjusts the visibility of the navigation links accordingly.</p>
+     *
+     * <p>If the authentication state cannot be determined because the underlying Vaadin session
+     * is no longer active (for example during logout teardown), the method safely falls back to
+     * treating the user as unauthenticated.</p>
+     *
+     * <p>This method is extracted to allow deterministic unit testing of the visibility logic
+     * without requiring an active Vaadin session or UI context.</p>
+     *
+     * @param authenticationSignal the signal providing the current authentication state
+     * @param dashboardLink the navigation link to the dashboard view
+     * @param loginLink the navigation link to the login view
+     * @param logoutLink the navigation link to the logout view
+     */
+    @VisibleForTesting
+    static void updateAuthenticationVisibility(final @NonNull AuthenticationSignal authenticationSignal,
+                                               final @NotNull RouterLink dashboardLink,
+                                               final @NotNull RouterLink loginLink,
+                                               final @NotNull RouterLink logoutLink) {
+        boolean isLoggedIn;
+        try {
+            isLoggedIn = authenticationSignal.isAuthenticated();
+        } catch (final Exception e) {
+            isLoggedIn = false;
+        }
+        dashboardLink.setVisible(isLoggedIn);
+        loginLink.setVisible(!isLoggedIn);
+        logoutLink.setVisible(isLoggedIn);
     }
 
     private Component createThemeToggle() {
