@@ -97,6 +97,9 @@ If no user with the admin role is found in the database, a new instance admin wi
 | `DUKEOPS_MAIL_STARTTLS_ENABLE`   | `false`             | Enable STARTTLS encryption (recommended for port 587).                |
 | `DUKEOPS_MAIL_STARTTLS_REQUIRED` | `false`             | Require STARTTLS (connection will fail if not supported).             |
 | `DUKEOPS_MAIL_SSL_ENABLE`        | `false`             | Enable SSL encryption (typically for port 465).                       |
+| `DUKEOPS_MAIL_CONNECTION_TIMEOUT` | `5000`              | Timeout in milliseconds for establishing the SMTP connection. |
+| `DUKEOPS_MAIL_TIMEOUT`            | `5000`              | Timeout in milliseconds for waiting on SMTP server responses. |
+| `DUKEOPS_MAIL_WRITE_TIMEOUT`      | `5000`              | Timeout in milliseconds for writing data to the SMTP server. |
 | `DUKEOPS_MAIL_ENCODING`          | `UTF-8`             | Default encoding for email subject and content.                       |
 
 #### Example Configuration
