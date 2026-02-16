@@ -18,15 +18,20 @@
 package eu.ijug.dukeops.domain.dashboard.boundary;
 
 import com.vaadin.flow.component.card.Card;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.router.Route;
+import eu.ijug.dukeops.domain.authentication.control.AuthenticationService;
 import eu.ijug.dukeops.domain.clubdesk.boundary.ClubDeskEditView;
+import eu.ijug.dukeops.domain.clubdesk.boundary.ClubDeskImportView;
 import eu.ijug.dukeops.infra.ui.vaadin.control.Navigator;
 import eu.ijug.dukeops.infra.ui.vaadin.layout.AbstractView;
 import eu.ijug.dukeops.infra.ui.vaadin.layout.WebsiteLayout;
 import jakarta.annotation.security.PermitAll;
 import org.jetbrains.annotations.NotNull;
+
+import static eu.ijug.dukeops.domain.user.entity.UserRole.ADMIN;
 
 @PermitAll
 @Route(value = "", layout = WebsiteLayout.class)
@@ -35,15 +40,30 @@ public final class DashboardView extends AbstractView {
     @NotNull
     private final Navigator navigator;
 
-    public DashboardView(final @NotNull Navigator navigator) {
+    public DashboardView(final @NotNull AuthenticationService authenticationService,
+                         final @NotNull Navigator navigator) {
         super();
         this.navigator = navigator;
         addClassName("dashboard-view");
         add(new H3("Dashboard"));
-        add(createCard(
+
+        final var cardContainer = new Div();
+        cardContainer.addClassName("card-container");
+        add(cardContainer);
+
+        final var loggedInUser = authenticationService.getLoggedInUser().orElseThrow();
+        if (loggedInUser.role() == ADMIN) {
+            cardContainer.add(createCard(
+                    getTranslation("domain.clubdesk.boundary.ClubDeskImportView.title"),
+                    getTranslation("domain.clubdesk.boundary.ClubDeskImportView.description"),
+                    "images/clubdesk-import.webp",
+                    ClubDeskImportView.class));
+        }
+
+        cardContainer.add(createCard(
                 getTranslation("domain.clubdesk.boundary.ClubDeskEditView.title"),
                 getTranslation("domain.clubdesk.boundary.ClubDeskEditView.description"),
-                "images/clubdesk.webp",
+                "images/clubdesk-edit.webp",
                 ClubDeskEditView.class));
     }
 

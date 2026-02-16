@@ -15,16 +15,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-.dashboard-view vaadin-card {
-    width: 250px;
+.dashboard-view .card-container {
+    width: 100%;
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fill, 250px);
+    justify-content: start;
+    gap: var(--vaadin-gap-s);
+    align-items: stretch;
+}
+
+.dashboard-view .card-container vaadin-card {
+    height: 100%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.dashboard-view vaadin-card:hover {
+.dashboard-view .card-container vaadin-card:hover {
     box-shadow: var(--aura-shadow-s);
     transform: scale(1.03);
 }
 
-.dashboard-view vaadin-card.clickable {
+.dashboard-view .card-container vaadin-card.clickable {
     cursor: pointer;
 }
