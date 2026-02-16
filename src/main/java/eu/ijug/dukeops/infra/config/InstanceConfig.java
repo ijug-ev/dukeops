@@ -19,4 +19,4 @@ package eu.ijug.dukeops.infra.config;
 
 import org.jetbrains.annotations.NotNull;
 
-public record InstanceConfig(@NotNull String admin) { }
+public record InstanceConfig(@NotNull String admins) { }

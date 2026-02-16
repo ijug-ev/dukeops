@@ -52,6 +52,20 @@ class StartupHandlerTest {
     }
 
     @Test
+    void shouldNominateToAdminIfEmailBelongsToUser() {
+        final var appConfig = createAppConfig("user@example.com");
+        final var userService = mockUserService("user@example.com");
+
+        final var startupHandler = new StartupHandler(appConfig, userService);
+        startupHandler.onApplicationReady();
+
+        verify(userService).storeUser(argThat(user ->
+                user.email().equals("user@example.com") &&
+                        user.role() == UserRole.ADMIN
+        ));
+    }
+
+    @Test
     void shouldSkipCreationIfAdminAlreadyExists() {
         final var appConfig = createAppConfig("admin@example.com");
         final var userService = mockUserService("admin@example.com");
@@ -78,7 +92,10 @@ class StartupHandlerTest {
                 Optional.empty() :
                 Optional.of(
                         new UserDto(null, null, null,
-                        "Instance Admin", adminEmail, UserRole.ADMIN));
+                        "Instance Admin", adminEmail,
+                                adminEmail.startsWith("admin") ?
+                                        UserRole.ADMIN :
+                                        UserRole.USER));
         final var userService = mock(UserService.class);
         when(userService.getUserByEmail(adminEmail)).thenReturn(adminUser);
         return userService;

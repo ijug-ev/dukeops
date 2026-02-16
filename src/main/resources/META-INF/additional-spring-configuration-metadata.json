@@ -16,9 +16,9 @@
       "description" : "Optional reply-to address (e.g. `support@example.com`)."
     },
     {
-      "name" : "dukeops.instance.admin",
+      "name" : "dukeops.instance.admins",
       "type" : "java.lang.String",
-      "description" : "Email address of the instance admin (e.g. `admin@example.com`)."
+      "description" : "A comma-separated list of email addresses of the instance administrators."
     }
   ]
 }

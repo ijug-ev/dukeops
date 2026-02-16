@@ -81,12 +81,24 @@ public class StartupHandler {
      * this method performs no action.</p>
      */
     private void createInitialAdmin() {
-        final var adminEmail = appConfig.instance().admin().trim().toLowerCase(Locale.getDefault());
-        if (!adminEmail.isBlank()) {
-            final var existingAdmin = userService.getUserByEmail(adminEmail);
-            if (existingAdmin.isPresent()) {
-                LOGGER.info("Admin user with email '{}' already exists, skipping creation", adminEmail);
-                return;
+        final var adminEmails = appConfig.instance().admins().trim().toLowerCase(Locale.getDefault()).split(",");
+        for (final String adminEmail : adminEmails) {
+            if (adminEmail.isBlank()) {
+                LOGGER.debug("No administrator email configured, skipping admin user creation.");
+                continue;
+            }
+            final var existingUser = userService.getUserByEmail(adminEmail);
+            if (existingUser.isPresent()) {
+                final var user = existingUser.orElseThrow();
+                if (user.role().equals(UserRole.ADMIN)) {
+                    LOGGER.info("Admin user with email '{}' already exists, skipping creation.", adminEmail);
+                    continue;
+                }
+                final var adminUser = new UserDto(user.id(), user.created(), user.updated(),
+                        user.name(), adminEmail, UserRole.ADMIN);
+                userService.storeUser(adminUser);
+                LOGGER.warn("Existing user with email '{}' nominated as admin.", adminEmail);
+                continue;
             }
             final var adminUser = new UserDto(null, null, null,
                     "Instance Admin", adminEmail, UserRole.ADMIN);

@@ -67,16 +67,16 @@ DUKEOPS_PORT=8080
 
 #### Admin
 
-When starting *DukeOps*, the system can automatically create an instance admin. To enable this, set the following environment variable to the email address of the admin:
+When starting *DukeOps*, the system can automatically create instance admins. To enable this, set the following environment variable to a comma separated list of the email addresses of the admins:
 
 ```
-DUKEOPS_INSTANCE_ADMIN=admin@example.com
+DUKEOPS_INSTANCE_ADMINS=admin@example.com
 ```
 
 If no user with the admin role is found in the database, a new instance admin will be created with the email address given.
 
 > [!WARNING]
-> This mechanism runs once on each start! It will **not** overwrite or update existing users with the same email address.
+> This mechanism runs once on each start! It will nominate existing users with the same email address as admin. If there is no user with the specified email address, it will crate a new one. Existing admins are skipped.
 
 ### Mail Configuration
 
@@ -107,7 +107,7 @@ If no user with the admin role is found in the database, a new instance admin wi
 In a `.env` file, CI system, or Docker environment:
 
 ```bash
-DUKEOPS_INSTANCE_ADMIN=admin@example.com
+DUKEOPS_INSTANCE_ADMINS=admin@example.com
 DUKEOPS_MAIL_FROM=noreply@example.com
 DUKEOPS_MAIL_REPLY_TO=support@example.com
 DUKEOPS_MAIL_HOST=smtp.example.com
