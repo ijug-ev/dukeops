@@ -86,10 +86,11 @@ class StartupHandlerTest {
 
     private AppConfig createAppConfig(final @NotNull String adminEmail) {
         final var version = "0.0.0";
+        final var buildTime = "0000-00-00";
         final var baseUrl = "http://localhost:8080";
         final var instanceConfig = new InstanceConfig(adminEmail);
         final var mailConfig = new MailConfig("", "");
-        return new AppConfig(version, baseUrl, mailConfig, instanceConfig);
+        return new AppConfig(version, buildTime, baseUrl, mailConfig, instanceConfig);
     }
 
 }

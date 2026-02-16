@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "dukeops")
 public record AppConfig(@NotNull String version,
+                        @NotNull String buildTime,
                         @NotNull String baseUrl,
                         @NotNull MailConfig mail,
                         @NotNull InstanceConfig instance) {

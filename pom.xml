@@ -57,8 +57,8 @@
         <maven.version>3.9.9</maven.version>
         <mockito.version>5.21.0</mockito.version>
         <vaadin.version>25.0.3</vaadin.version>
-        <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
-        <revision>1.0.0</revision>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+        <revision>1.1.0-SNAPSHOT</revision>
     </properties>
 
     <parent>
@@ -291,6 +291,20 @@
 
     <build>
         <defaultGoal>spring-boot:run</defaultGoal>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>application.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 
         <pluginManagement>
             <plugins>

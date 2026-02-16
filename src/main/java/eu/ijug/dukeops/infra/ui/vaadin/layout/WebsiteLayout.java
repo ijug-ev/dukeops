@@ -49,7 +49,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         main = new Main();
         add(main);
 
-        final var dukeOpsVersion = appConfig.version();
+        final var dukeOpsVersion = "%s (%s)".formatted(appConfig.version(), appConfig.buildTime());
         add(new PageFooter(dukeOpsVersion));
     }
 
