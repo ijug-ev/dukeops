@@ -1,10 +1,3 @@
--- Drop table in opposite order to avoid foreign key constraints.
-
-DROP TABLE IF EXISTS clubdesk;
-DROP TABLE IF EXISTS user;
-
--- Recreate tables in correct order.
-
 CREATE TABLE user (
     id VARCHAR(36) NOT NULL,
     created TIMESTAMP NOT NULL,

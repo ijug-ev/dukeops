@@ -58,8 +58,7 @@
         <mockito.version>5.21.0</mockito.version>
         <vaadin.version>25.0.3</vaadin.version>
         <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
-        <buildtype>SNAPSHOT</buildtype>
-        <revision>1.0.0-${buildtype}.${maven.build.timestamp}</revision>
+        <revision>1.0.0</revision>
     </properties>
 
     <parent>
