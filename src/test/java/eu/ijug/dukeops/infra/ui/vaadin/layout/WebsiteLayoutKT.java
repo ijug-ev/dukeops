@@ -29,6 +29,7 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.RouterLink;
 import eu.ijug.dukeops.domain.dashboard.boundary.DashboardView;
+import eu.ijug.dukeops.infra.config.AppConfig;
 import eu.ijug.dukeops.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -138,4 +139,23 @@ class WebsiteLayoutKT extends KaribuTest {
                 .hasMessage("WebsiteLayout content must be a Component");
     }
 
+    @Test
+    void getVersionNumber_shouldReturnVersionWithBuildTimeForSnapshot() {
+        final var appConfig = mock(AppConfig.class);
+        when(appConfig.version()).thenReturn("1.0.0-SNAPSHOT");
+        when(appConfig.buildTime()).thenReturn("2024-06-01T12:00:00Z");
+
+        final var versionNumber = websiteLayout.getVersionNumber(appConfig);
+        assertThat(versionNumber).isEqualTo("1.0.0-SNAPSHOT (2024-06-01T12:00:00Z)");
+    }
+
+    @Test
+    void getVersionNumber_shouldReturnVersionWithoutBuildTimeForRelease() {
+        final var appConfig = mock(AppConfig.class);
+        when(appConfig.version()).thenReturn("1.0.0");
+        when(appConfig.buildTime()).thenReturn("2024-06-01T12:00:00Z");
+
+        final var versionNumber = websiteLayout.getVersionNumber(appConfig);
+        assertThat(versionNumber).isEqualTo("1.0.0");
+    }
 }

@@ -31,6 +31,7 @@ import eu.ijug.dukeops.infra.ui.vaadin.control.Navigator;
 import eu.ijug.dukeops.infra.ui.vaadin.control.ThemeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 @AnonymousAllowed
 public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnterObserver {
@@ -49,8 +50,18 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         main = new Main();
         add(main);
 
-        final var dukeOpsVersion = "%s (%s)".formatted(appConfig.version(), appConfig.buildTime());
+        final var dukeOpsVersion = getVersionNumber(appConfig);
         add(new PageFooter(dukeOpsVersion));
+    }
+
+    @VisibleForTesting
+    String getVersionNumber(final @NotNull AppConfig appConfig) {
+        final var version = appConfig.version();
+        if (version.contains("-")) {
+            final var buildTime = appConfig.buildTime();
+            return "%s (%s)".formatted(version, buildTime);
+        }
+        return version;
     }
 
     @Override
