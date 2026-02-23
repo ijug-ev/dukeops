@@ -40,8 +40,12 @@ import eu.ijug.dukeops.infra.ui.vaadin.control.Navigator;
 import eu.ijug.dukeops.infra.ui.vaadin.layout.AbstractView;
 import eu.ijug.dukeops.infra.ui.vaadin.layout.WebsiteLayout;
 import jakarta.annotation.security.RolesAllowed;
+import org.iban4j.BicUtil;
+import org.iban4j.Iban4jException;
+import org.iban4j.IbanUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -308,16 +312,44 @@ public final class ClubDeskEditView extends AbstractView {
 
         sepaIban.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaIban"));
         sepaIban.setMaxLength(MAX_LENGTH_SEPA_IBAN);
+        sepaIban.setAllowedCharPattern("[A-Za-z0-9]");
+        uppercaseOnBlur(sepaIban);
         binder.forField(sepaIban)
                 .withValidator(value -> !sepaEnabled.getValue() || !value.isBlank(),
-                        getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaIban"))
+                        getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaIban.empty"))
+                .withValidator(value -> {
+                    if (!sepaEnabled.getValue()) {
+                        return true;
+                    }
+                    final var iban = value.toUpperCase(Locale.ROOT);
+                    try {
+                        IbanUtil.validate(iban);
+                        return true;
+                    } catch (final Iban4jException e) {
+                        return false;
+                    }
+                }, getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaIban.invalid"))
                 .bind(ClubDeskDto::sepaIban, null);
 
         sepaBic.setLabel(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.label.sepaBic"));
         sepaBic.setMaxLength(MAX_LENGTH_SEPA_BIC);
+        sepaBic.setAllowedCharPattern("[A-Za-z0-9]");
+        uppercaseOnBlur(sepaBic);
         binder.forField(sepaBic)
                 .withValidator(value -> !sepaEnabled.getValue() || !value.isBlank(),
-                        getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaBic"))
+                        getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaBic.empty"))
+                .withValidator(value -> {
+                    if (!sepaEnabled.getValue()) {
+                        return true;
+                    }
+                    final var bic = value.toUpperCase(Locale.ROOT);
+                    try {
+                        BicUtil.validate(bic);
+                        return true;
+                    } catch (final Iban4jException e) {
+                        return false;
+                    }
+                }, getTranslation("domain.clubdesk.boundary.ClubDeskEditView.error.sepaBic.invalid"))
                 .bind(ClubDeskDto::sepaBic, null);
 
         sepaAllowInfo.setText(getTranslation("domain.clubdesk.boundary.ClubDeskEditView.info.sepa.allow"));
@@ -333,6 +365,10 @@ public final class ClubDeskEditView extends AbstractView {
         formLayout.setColspan(sepaMandateReference, 2);
         formLayout.setColspan(sepaIban, 4);
         formLayout.setColspan(sepaBic, 2);
+    }
+
+    private void uppercaseOnBlur(final @NotNull TextField textField) {
+        textField.addBlurListener(_ -> textField.setValue(textField.getValue().toUpperCase(Locale.ROOT)));
     }
 
     private void checkSepaEnabled() {
@@ -429,8 +465,8 @@ public final class ClubDeskEditView extends AbstractView {
                 isSepaEnabled,
                 isSepaEnabled ? sepaAccountHolder.getValue().trim() : "",
                 isSepaEnabled ? sepaMandateReference.getValue().trim() : "",
-                isSepaEnabled ? sepaIban.getValue().trim() : "",
-                isSepaEnabled ? sepaBic.getValue().trim() : "",
+                isSepaEnabled ? sepaIban.getValue().toUpperCase(Locale.ROOT) : "",
+                isSepaEnabled ? sepaBic.getValue().toUpperCase(Locale.ROOT) : "",
                 javaUserGroup.getValue(),
                 newsletter.getValue() == NewsletterStatus.ON
         );

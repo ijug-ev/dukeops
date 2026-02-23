@@ -37,6 +37,7 @@ import eu.ijug.dukeops.test.KaribuTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.github.mvysny.kaributesting.v10.BasicUtilsKt._fireDomEvent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -187,12 +188,31 @@ public class ClubDeskEditViewKT extends KaribuTest {
         assertThat(sepaBic.isEnabled()).isTrue();
         assertThat(saveButton.isEnabled()).isFalse();
 
-        // fill SEPA fields and check that save button is enabled
+        // fill SEPA fields with incorrect IBAN/BIC and check that save button is disabled
         sepaAccountHolder.setValue("John Doe");
         assertThat(saveButton.isEnabled()).isFalse();
-        sepaIban.setValue("US89370400440532013000");
+        sepaIban.setValue("xx00000000000000000000");
+        _fireDomEvent(sepaIban, "blur");
+        assertThat(sepaIban.getValue()).isEqualTo("XX00000000000000000000");
         assertThat(saveButton.isEnabled()).isFalse();
-        sepaBic.setValue("COBADEFFXXX");
+        sepaBic.setValue("xx000000000");
+        _fireDomEvent(sepaBic, "blur");
+        assertThat(sepaBic.getValue()).isEqualTo("XX000000000");
+        assertThat(saveButton.isEnabled()).isFalse();
+
+        // disable SEPA should enable save button, even with incorrect IBAN/BIC, as SEPA data will be ignored when saving
+        sepaEnabled.setValue(false);
+        addressAddition.setValue("Foobar");
+        assertThat(saveButton.isEnabled()).isTrue();
+        addressAddition.setValue("");
+
+        // fill SEPA fields with correct IBAN/BIC and check that save button is enabled
+        sepaEnabled.setValue(true);
+        sepaAccountHolder.setValue("John Doe");
+        assertThat(saveButton.isEnabled()).isFalse();
+        sepaIban.setValue("DE02120300000000202051");
+        assertThat(saveButton.isEnabled()).isFalse();
+        sepaBic.setValue("BYLADEM1001");
         assertThat(saveButton.isEnabled()).isTrue();
 
         // disable SEPA and check that related fields are disabled
@@ -225,8 +245,8 @@ public class ClubDeskEditViewKT extends KaribuTest {
         final var updatedClubDeskDto2 = updatedClubDeskForCurrentUser2.orElseThrow();
         assertThat(updatedClubDeskDto2.sepaEnabled()).isTrue();
         assertThat(updatedClubDeskDto2.sepaAccountHolder()).isEqualTo("John Doe");
-        assertThat(updatedClubDeskDto2.sepaIban()).isEqualTo("US89370400440532013000");
-        assertThat(updatedClubDeskDto2.sepaBic()).isEqualTo("COBADEFFXXX");
+        assertThat(updatedClubDeskDto2.sepaIban()).isEqualTo("DE02120300000000202051");
+        assertThat(updatedClubDeskDto2.sepaBic()).isEqualTo("BYLADEM1001");
 
         // disable newsletter and check that save button is enabled
         newsletter.setValue(NewsletterStatus.OFF);
