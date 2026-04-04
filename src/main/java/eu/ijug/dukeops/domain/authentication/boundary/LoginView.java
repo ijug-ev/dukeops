@@ -57,7 +57,7 @@ public final class LoginView extends AbstractView {
         add(emailField);
 
         submitButton = new Button(getTranslation("web.view.LoginView.login.button"));
-        submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        submitButton.addThemeVariants(ButtonVariant.AURA_PRIMARY);
         submitButton.addClickListener(_ -> handleLogin());
         submitButton.addClickShortcut(Key.ENTER);
         add(submitButton);
