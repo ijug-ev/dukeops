@@ -73,7 +73,8 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 "",
-                "JUG CH"
+                "JUG CH",
+                List.of()
         );
 
         final int saved = clubDeskService.saveImportRecords(List.of(record));
@@ -123,7 +124,8 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 "",
-                "JUG CH"
+                "JUG CH",
+                List.of()
         );
 
         final int savedFirst = clubDeskService.saveImportRecords(List.of(first));
@@ -159,7 +161,8 @@ final class ClubDeskServiceIT extends IntegrationTest {
                 "",
                 "",
                 "",
-                "JUG CH"
+                "JUG CH",
+                List.of()
         );
 
         final int savedSecond = clubDeskService.saveImportRecords(List.of(second));

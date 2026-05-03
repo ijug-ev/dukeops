@@ -34,8 +34,8 @@ final class ApacheCommonsClubDeskImporterTest {
     @Test
     void parse_shouldReadMinimalValidCsv() throws IOException {
         final String csv = """
-                "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
-                "john.doe@example.com";"John";"Doe";"";"";"";"";"";"";"";"";"";"Nein";"";"";"";"";"";"";"";""
+                "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"[Gruppen]";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
+                "john.doe@example.com";"John";"Doe";"";"";"";"";"";"";"";"";"";"";"Nein";"";"";"";"";"";"";"";""
                 """;
 
         final var records = importer.parse(Reader.of(csv));
@@ -50,7 +50,7 @@ final class ApacheCommonsClubDeskImporterTest {
     @Test
     void parse_shouldFailWhenRequiredEmailBlank() {
         final String csv = """
-                "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
+                "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"[Gruppen]";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
                 "";"";"";"";"";"";"";"";"";"";"";"";"Nein";"";"";"";"";"";"";"";""
                 """;
 
@@ -86,8 +86,8 @@ final class ApacheCommonsClubDeskImporterTest {
     @Test
     void parse_shouldParseSepaEnabledJaAsTrue() throws IOException {
         final String csv = """
-            "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
-            "john.doe@example.com";"John";"Doe";"";"";"";"";"";"";"";"";"";"Ja";"";"";"";"";"";"";"";""
+            "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"[Gruppen]";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
+            "john.doe@example.com";"John";"Doe";"";"";"";"";"";"";"";"";"";"";"Ja";"";"";"";"";"";"";"";""
             """;
 
         final var records = importer.parse(Reader.of(csv));
@@ -99,12 +99,12 @@ final class ApacheCommonsClubDeskImporterTest {
     @Test
     void parse_shouldParseSepaEnabledTruthyVariantsAsTrue() throws IOException {
         final String header = """
-            "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
+            "E-Mail";"Vorname";"Nachname";"Adresse";"Adress-Zusatz";"PLZ";"Ort";"Land";"E-Mail Alternativ";"[Gruppen]";"Matrix";"Mastodon";"LinkedIn";"SEPA-Lastschrift erlauben";"Mandatsreferenz";"Mandat Unterschriftsdatum";"Lastschriftart";"Letzter Lastschrifteinzug";"Kontoinhaber";"IBAN";"BIC";"Java User Group"
             """;
 
         for (final var truthy : List.of("true", "1", "yes")) {
             final String csv = header + """
-                "john.doe@example.com";"John";"Doe";"";"";"";"";"";"";"";"";"";"%s";"";"";"";"";"";"";"";""
+                "john.doe@example.com";"John";"Doe";"";"";"";"";"";"";"";"";"";"";"%s";"";"";"";"";"";"";"";""
                 """.formatted(truthy);
 
             final var record = importer.parse(Reader.of(csv)).getFirst();

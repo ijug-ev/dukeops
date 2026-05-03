@@ -20,6 +20,8 @@ package eu.ijug.dukeops.domain.clubdesk.entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public record ImportRecord(
         @NotNull String firstname,
         @NotNull String lastname,
@@ -41,5 +43,6 @@ public record ImportRecord(
         @NotNull String sepaIban,
         @NotNull String sepaBic,
 
-        @NotNull String jug
+        @NotNull String jug,
+        @NotNull List<String> groups
 ) { }

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -103,6 +104,7 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
         final var sepaBic = optional(row, "BIC");
 
         final var jug = optional(row, "Java User Group");
+        final var groups = parseGroups(row);
 
         return new ImportRecord(
                 firstname,
@@ -122,7 +124,8 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
                 sepaMandateReference,
                 sepaIban,
                 sepaBic,
-                jug
+                jug,
+                groups
         );
     }
 
@@ -147,6 +150,13 @@ public class ApacheCommonsClubDeskImporter implements ClubDeskImporter {
     private static boolean parseBoolean(final @NotNull String value) {
         final var v = value.trim().toLowerCase(Locale.ROOT);
         return v.equals("ja") || v.equals("true") || v.equals("1") || v.equals("yes");
+    }
+
+    private static @NotNull List<String> parseGroups(final @NotNull CSVRecord row) {
+        return Arrays.stream(row.get("[Gruppen]").split(","))
+                .filter(value -> !value.isBlank())
+                .map(String::trim)
+                .toList();
     }
 
 }

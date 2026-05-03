@@ -118,6 +118,7 @@ public final class ClubDeskImportView extends AbstractView {
         grid.addColumn(ImportRecord::sepaIban).setHeader(getFieldName("sepaIban"));
         grid.addColumn(ImportRecord::sepaBic).setHeader(getFieldName("sepaBic"));
         grid.addColumn(ImportRecord::jug).setHeader(getFieldName("jug"));
+        grid.addColumn(ImportRecord::groups).setHeader(getFieldName("groups"));
         grid.setEnabled(false);
         add(grid);
 

@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
@@ -105,6 +106,9 @@ final class ClubDeskImportViewKT extends KaribuTest {
 
         assertThat(items).extracting(ImportRecord::lastname)
                 .containsExactly("Doe", "Doe");
+
+        assertThat(items).extracting(ImportRecord::groups)
+                .containsExactly(List.of(), List.of("Redaktionsbeirat", "Newsletter", "Foobar"));
 
         final var saveButton = findChildByClassName(view, Button.class, "save-button");
         assertThat(saveButton.isEnabled()).isTrue();

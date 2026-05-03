@@ -42,7 +42,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.any;
@@ -93,7 +92,7 @@ final class ClubDeskServiceTest {
                 "john.doe@example.com",
                 "", "", "", "",
                 false, "", "", "", "",
-                "JUG X"
+                "JUG X", List.of()
         );
 
         when(userService.getUserByEmail("john.doe@example.com")).thenReturn(Optional.empty());
@@ -128,9 +127,7 @@ final class ClubDeskServiceTest {
         assertThat(dto.firstname()).isEqualTo("John");
         assertThat(dto.lastname()).isEqualTo("Doe");
         assertThat(dto.email()).isEqualTo("john.doe@example.com");
-
-        // Newsletter default must be true (opt-out)
-        assertThat(dto.newsletter()).isTrue();
+        assertThat(dto.newsletter()).isFalse();
     }
 
     @Test
@@ -144,7 +141,7 @@ final class ClubDeskServiceTest {
                 "john.doe@example.com",
                 "", "", "", "",
                 false, "", "", "", "",
-                ""
+                "", List.of()
         );
 
         final UserDto existingUser = new UserDto(
@@ -189,7 +186,7 @@ final class ClubDeskServiceTest {
                 "john.doe@example.com",
                 "", "", "", "",
                 false, "", "", "", "",
-                ""
+                "", List.of()
         );
 
         final UserDto existingUser = new UserDto(

@@ -62,7 +62,7 @@ import static eu.ijug.dukeops.infra.persistence.jooq.generated.Tables.CLUBDESK;
 @Service
 public class ClubDeskService {
 
-    private static final boolean DEFAULT_NEWSLETTER_SETTING = true; // opt-out
+    private static final @NotNull String GROUP_NEWSLETTER = "Newsletter";
     private static final @NotNull Charset CLUBDESK_CHARSET = StandardCharsets.ISO_8859_1;
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ClubDeskService.class);
 
@@ -215,7 +215,7 @@ public class ClubDeskService {
                 importRecord.sepaBic(),
 
                 importRecord.jug(),
-                DEFAULT_NEWSLETTER_SETTING
+                importRecord.groups().contains(GROUP_NEWSLETTER)
         );
     }
 
